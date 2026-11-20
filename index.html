@@ -676,7 +676,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             <input id="c-email" name="correo" type="email" required autocomplete="email" placeholder="Correo electrónico" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
             <label for="c-msg" class="sr-only">Mensaje</label>
             <textarea id="c-msg" name="mensaje" rows="3" required placeholder="¿En qué podemos ayudarte?" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md"></textarea>
-            <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+            <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
             <span id="contact-ok" role="status" class="hidden font-body text-body-sm text-success">Mensaje enviado. Te responderemos pronto.</span>
             <span id="contact-err" role="alert" class="hidden font-body text-body-sm text-error">No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a chreedco@gmail.com.</span>
             <button type="submit" id="contact-btn" data-component-id="button-cta-gold" data-component-type="button" data-component-variant="secondary" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg self-start disabled:opacity-60 disabled:cursor-wait">
@@ -792,8 +792,10 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       if (step === 4) updateQuoteSummary();
     }
 
-    // ===== Envío de formularios por correo (FormSubmit → chreedco@gmail.com) =====
-    const FORM_ENDPOINT = 'https://formsubmit.co/ajax/chreedco@gmail.com';
+    // ===== Envío de formularios por correo (Web3Forms → correo de la empresa) =====
+    // La clave de acceso es pública por diseño: solo permite enviar formularios al correo registrado.
+    const FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+    const FORM_ACCESS_KEY = '07461b66-5dcb-439b-9e6f-53e10052d3e3';
 
     const PLANS = {
       'Esencial':        { setup: 'desde $500',   monthly: '$80 / mes' },
@@ -839,7 +841,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       const res = await fetch(FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(Object.assign({ access_key: FORM_ACCESS_KEY, from_name: 'Sitio web Chreed Corporation' }, payload))
       });
       const data = await res.json().catch(function () { return {}; });
       if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'Error de envío');
@@ -860,10 +862,8 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       setSending(btn, true, ok, err);
       try {
         await sendToEmail({
-          _subject: 'Nueva cotización web: ' + name + ' (plan ' + q.plan + ')',
-          _template: 'table',
-          _captcha: 'false',
-          _replyto: document.getElementById('q-email').value.trim(),
+          subject: 'Nueva cotización web: ' + name + ' (plan ' + q.plan + ')',
+          replyto: document.getElementById('q-email').value.trim(),
           'Nombre y empresa': name,
           'Correo': document.getElementById('q-email').value.trim(),
           'Teléfono / WhatsApp': document.getElementById('q-phone').value.trim() || 'No indicado',
@@ -887,17 +887,15 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
     async function submitContact(event) {
       event.preventDefault();
       const form = event.target;
-      if (form._honey && form._honey.value) return; // bot
+      if (form.botcheck && form.botcheck.checked) return; // bot
       const btn = document.getElementById('contact-btn');
       const ok = document.getElementById('contact-ok');
       const err = document.getElementById('contact-err');
       setSending(btn, true, ok, err);
       try {
         await sendToEmail({
-          _subject: 'Nuevo mensaje de contacto: ' + form.nombre.value.trim(),
-          _template: 'table',
-          _captcha: 'false',
-          _replyto: form.correo.value.trim(),
+          subject: 'Nuevo mensaje de contacto: ' + form.nombre.value.trim(),
+          replyto: form.correo.value.trim(),
           'Nombre': form.nombre.value.trim(),
           'Correo': form.correo.value.trim(),
           'Mensaje': form.mensaje.value.trim()
