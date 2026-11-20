@@ -2,7 +2,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CHREED CORPORATION (Chreed Co.) — Páginas web profesionales</title>
+  <meta name="description" content="Diseñamos páginas web profesionales a la medida para negocios en Costa Rica y el extranjero: creación con tarifa única, hosting y mantenimiento mensual. Cotiza en línea.">
+  <meta name="theme-color" content="#4A033D">
+  <!-- Al conectar un dominio propio, reemplazar https://chreed-corporation.vercel.app en estas etiquetas, robots.txt y sitemap.xml -->
+  <link rel="canonical" href="https://chreed-corporation.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_CR">
+  <meta property="og:site_name" content="Chreed Corporation">
+  <meta property="og:title" content="Chreed Corporation — Páginas web profesionales">
+  <meta property="og:description" content="Páginas web a la medida que hacen crecer tu negocio. Creación, hosting y mantenimiento mensual. Cotiza en línea.">
+  <meta property="og:url" content="https://chreed-corporation.vercel.app/">
+  <meta property="og:image" content="https://chreed-corporation.vercel.app/img/portada-laptop.jpg">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="1067">
+  <meta property="og:image:alt" content="Laptop sobre un escritorio de madera en una oficina moderna">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/favicon.png">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
 globalThis.tailwind = globalThis.tailwind || {};
@@ -514,6 +530,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <label for="q-notes" class="sr-only">Detalles adicionales (opcional)</label>
                 <textarea id="q-notes" rows="2" placeholder="Cuéntanos más sobre tu proyecto (opcional)" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md sm:col-span-2"></textarea>
               </div>
+              <p class="font-body text-body-sm text-on-surface-variant">Al enviar aceptas nuestra <a href="privacidad.html" class="text-primary underline">Política de privacidad</a>.</p>
               <span id="quote-sent-msg" role="status" class="hidden font-body text-body-sm text-success">¡Solicitud enviada! Cristhian o Jaed te responderán muy pronto.</span>
               <span id="quote-err" role="alert" class="hidden font-body text-body-sm text-error">No pudimos enviar tu solicitud. Inténtalo de nuevo o escríbenos a chreedco@gmail.com.</span>
               <div class="flex items-center justify-between">
@@ -637,7 +654,16 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <span class="material-symbols-outlined text-primary" aria-hidden="true">expand_more</span>
               </summary>
               <p class="mt-gutter-sm font-body text-body-md text-on-surface-variant">
-                Pagas una tarifa única por el diseño y desarrollo de tu página. Luego, la mensualidad cubre el hosting, seguridad, actualizaciones y cambios de soporte.
+                Pagas una tarifa única por el diseño y desarrollo de tu página: el 100% se cancela al aprobar tu cotización, antes de iniciar el trabajo. Luego, la mensualidad se paga cada mes desde la publicación y cubre el hosting, seguridad, actualizaciones y cambios de soporte.
+              </p>
+            </details>
+            <details class="p-gutter-lg group">
+              <summary class="flex items-center justify-between cursor-pointer font-title text-title-md text-on-surface list-none">
+                <span>¿Qué medios de pago aceptan?</span>
+                <span class="material-symbols-outlined text-primary" aria-hidden="true">expand_more</span>
+              </summary>
+              <p class="mt-gutter-sm font-body text-body-md text-on-surface-variant">
+                Aceptamos transferencia bancaria, tarjeta de crédito o débito mediante un enlace de pago seguro que te enviamos, y PayPal para clientes internacionales. Los datos para pagar se incluyen en tu cotización aprobada.
               </p>
             </details>
             <details class="p-gutter-lg group">
@@ -677,6 +703,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             <label for="c-msg" class="sr-only">Mensaje</label>
             <textarea id="c-msg" name="mensaje" rows="3" required placeholder="¿En qué podemos ayudarte?" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md"></textarea>
             <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+            <p class="font-body text-body-sm text-on-surface-variant">Al enviar aceptas nuestra <a href="privacidad.html" class="text-primary underline">Política de privacidad</a>.</p>
             <span id="contact-ok" role="status" class="hidden font-body text-body-sm text-success">Mensaje enviado. Te responderemos pronto.</span>
             <span id="contact-err" role="alert" class="hidden font-body text-body-sm text-error">No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a chreedco@gmail.com.</span>
             <button type="submit" id="contact-btn" data-component-id="button-cta-gold" data-component-type="button" data-component-variant="secondary" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg self-start disabled:opacity-60 disabled:cursor-wait">
@@ -753,11 +780,12 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
           </div>
         </div>
         <div class="pt-gutter-md border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-sm font-body text-body-sm">
-          <span>© Chreed Corporation. Todos los derechos reservados.</span>
-          <div class="flex items-center gap-gutter-md">
+          <span>© <span id="year">2026</span> Chreed Corporation. Todos los derechos reservados.</span>
+          <div class="flex flex-wrap items-center gap-x-gutter-md gap-y-gutter-xs">
+            <a href="mailto:chreedco@gmail.com" class="hover:text-secondary">chreedco@gmail.com</a>
             <a href="https://instagram.com/chreed_co" target="_blank" rel="noopener noreferrer" class="hover:text-secondary">Instagram @chreed_co</a>
-            <span>Términos</span>
-            <span>Privacidad</span>
+            <a href="terminos.html" class="hover:text-secondary underline underline-offset-2">Términos</a>
+            <a href="privacidad.html" class="hover:text-secondary underline underline-offset-2">Privacidad</a>
           </div>
         </div>
       </div>
@@ -908,6 +936,8 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
         setSending(btn, false, ok, err);
       }
     }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     // ===== Menú móvil =====
     function toggleMobileMenu(forceClose) {
