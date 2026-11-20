@@ -104,6 +104,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Source+Code+Pro:wght@500&amp;display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
   <style>.material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp, .material-icons { display: inline-block; width: 1em; height: 1em; line-height: 1 !important; box-sizing: content-box; overflow: hidden; white-space: nowrap; direction: ltr; vertical-align: middle; }</style>
+  <style>[id] { scroll-margin-top: 88px; }</style>
 </head>
 <body class="bg-surface text-on-surface font-body antialiased">
   <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
@@ -125,15 +126,32 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
           <a href="#proceso" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">Proceso</a>
           <a href="#faq" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">FAQ</a>
           <a href="#contacto" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">Contacto</a>
-          <a href="#mi-cuenta" class="font-body text-body-sm text-secondary hover:text-on-primary transition-colors duration-state-change">Mi cuenta</a>
         </nav>
 
         <div class="flex items-center gap-gutter-sm shrink-0">
           <a href="#cotizar" data-component-id="button-cta-gold" data-component-type="button" data-component-variant="secondary" class="inline-flex items-center justify-center px-gutter-md py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg transition-colors duration-state-change hover:bg-secondary-container">
             <span data-design-text-token="label-lg">Cotizar</span>
           </a>
+          <button type="button" id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-controls="mobile-menu" aria-expanded="false" aria-label="Abrir menú" class="xl:hidden inline-flex items-center justify-center w-11 h-11 rounded border border-white/30 text-on-primary hover:bg-white/10 transition-colors">
+            <span class="material-symbols-outlined" aria-hidden="true" id="mobile-menu-icon">menu</span>
+          </button>
         </div>
       </div>
+
+      <!-- Menú desplegable para celulares, tabletas y laptops -->
+      <nav id="mobile-menu" aria-label="Navegación móvil" class="hidden xl:hidden border-t border-white/15 bg-primary">
+        <div class="max-w-[1200px] mx-auto px-page-margin lg:px-gutter-lg py-gutter-sm grid grid-cols-1 sm:grid-cols-2">
+          <a href="#inicio" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Inicio</a>
+          <a href="#servicios" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Servicios</a>
+          <a href="#planes" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Planes</a>
+          <a href="#cotizar" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Cotizar</a>
+          <a href="#proyectos" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Proyectos</a>
+          <a href="#nosotros" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Nosotros</a>
+          <a href="#proceso" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Proceso</a>
+          <a href="#faq" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">FAQ</a>
+          <a href="#contacto" class="py-3 font-body text-body-md text-on-primary hover:text-secondary">Contacto</a>
+        </div>
+      </nav>
     </header>
 
     <main class="flex-1">
@@ -167,7 +185,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
 
           <div class="lg:col-span-5">
             <div class="bg-surface-container border border-outline rounded-lg p-gutter-lg flex flex-col gap-gutter-md shadow-sm">
-              <img src="img/portada-laptop.jpg" alt="Sitio web profesional diseñado por Chreed Corporation" class="w-full aspect-[16/10] object-cover rounded-md border border-outline">
+              <img src="img/portada-laptop.jpg" alt="Laptop sobre un escritorio de madera en una oficina moderna" class="w-full aspect-[16/10] object-cover rounded-md border border-outline">
               <div class="flex items-center justify-between gap-gutter-sm">
                 <span class="font-body text-body-sm text-on-surface-variant">Diseño con identidad y mantenimiento continuo</span>
                 <span class="font-mono text-mono-sm text-primary">Chreed Co.</span>
@@ -295,7 +313,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <li>• Mantenimiento mensual, hosting y soporte</li>
               </ul>
             </div>
-            <a href="#cotizar" data-component-id="button-secondary" data-component-type="button" data-component-variant="secondary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg hover:bg-surface-container">
+            <a href="#cotizar" onclick="selectPlan('Esencial')" data-component-id="button-secondary" data-component-type="button" data-component-variant="secondary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg hover:bg-surface-container">
               <span data-design-text-token="label-lg">Cotizar este plan</span>
             </a>
           </article>
@@ -322,7 +340,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <li>• 50% de descuento en servicios digitales adicionales</li>
               </ul>
             </div>
-            <a href="#cotizar" data-component-id="button-primary" data-component-type="button" data-component-variant="primary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-primary text-on-primary font-label text-label-lg">
+            <a href="#cotizar" onclick="selectPlan('Negocio')" data-component-id="button-primary" data-component-type="button" data-component-variant="primary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-primary text-on-primary font-label text-label-lg">
               <span data-design-text-token="label-lg">Cotizar este plan</span>
             </a>
           </article>
@@ -346,7 +364,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <li>• Servicios digitales adicionales gratis</li>
               </ul>
             </div>
-            <a href="#cotizar" data-component-id="button-secondary" data-component-type="button" data-component-variant="secondary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg hover:bg-surface-container">
+            <a href="#cotizar" onclick="selectPlan('Corporativo')" data-component-id="button-secondary" data-component-type="button" data-component-variant="secondary" class="w-full inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg hover:bg-surface-container">
               <span data-design-text-token="label-lg">Cotizar este plan</span>
             </a>
           </article>
@@ -358,7 +376,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
         <div class="max-w-[900px] mx-auto px-page-margin lg:px-gutter-lg flex flex-col gap-gutter-lg">
           <div class="flex flex-col gap-gutter-xs">
             <h2 class="font-headline text-headline-lg-mobile lg:text-headline-lg text-on-surface">Cotizador guiado</h2>
-            <p class="font-body text-body-md text-on-surface-variant">Completa estos 4 pasos para recibir un estimado inmediato.</p>
+            <p class="font-body text-body-md text-on-surface-variant">Completa estos 4 pasos para ver un estimado inmediato y enviarnos tu solicitud.</p>
           </div>
 
           <div class="bg-surface-container-low border border-outline rounded-lg p-gutter-lg lg:p-gutter-xl flex flex-col gap-gutter-lg shadow-sm">
@@ -417,21 +435,22 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             <div id="quote-step-2" class="hidden flex-col gap-gutter-md">
               <h3 class="font-title text-title-lg text-on-surface">2. Alcance de tu página</h3>
               <label class="flex flex-col gap-gutter-xs">
-                <span class="font-label text-label-sm text-on-surface">Número aproximado de secciones</span>
-                <select id="q-sections" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-                  <option value="1 a 4 secciones">1 a 4 secciones (Esencial)</option>
-                  <option value="5 a 8 secciones">5 a 8 secciones (Negocio Pro)</option>
-                  <option value="Más de 8 secciones">Más de 8 secciones (A medida)</option>
+                <span class="font-label text-label-sm text-on-surface">Plan de interés</span>
+                <select id="q-plan" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+                  <option value="Esencial">Esencial · $500 + $80/mes</option>
+                  <option value="Negocio" selected>Negocio (recomendado) · $600 + $100/mes</option>
+                  <option value="Corporativo">Corporativo · $1,000 + $150/mes</option>
+                  <option value="No estoy seguro">No estoy seguro, quiero asesoría</option>
                 </select>
               </label>
               <div class="flex flex-col gap-gutter-xs">
                 <span class="font-label text-label-sm text-on-surface">Funcionalidades que necesitas</span>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-sm font-body text-body-sm">
-                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary" checked><span>Formulario de contacto</span></label>
-                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Catálogo de productos</span></label>
-                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Sistema de reservas</span></label>
-                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Blog o noticias</span></label>
-                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Tienda en línea</span></label>
+                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-feature" value="Formulario de contacto" class="rounded text-primary" checked><span>Formulario de contacto</span></label>
+                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-feature" value="Catálogo de productos" class="rounded text-primary"><span>Catálogo de productos</span></label>
+                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-feature" value="Sistema de reservas" class="rounded text-primary"><span>Sistema de reservas</span></label>
+                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-feature" value="Blog o noticias" class="rounded text-primary"><span>Blog o noticias</span></label>
+                  <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-feature" value="Tienda en línea" class="rounded text-primary"><span>Tienda en línea</span></label>
                 </div>
               </div>
               <div class="flex items-center justify-between">
@@ -448,12 +467,11 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             <div id="quote-step-3" class="hidden flex-col gap-gutter-md">
               <h3 class="font-title text-title-lg text-on-surface">3. Extras opcionales</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-sm font-body text-body-sm">
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary" checked><span>Registro de dominio</span></label>
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary" checked><span>Integración con redes sociales</span></label>
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Diseño de logo</span></label>
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Redacción de textos</span></label>
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary"><span>Selección o edición de fotos</span></label>
-                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" class="rounded text-primary" checked><span>Mantenimiento mensual</span></label>
+                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-extra" value="Registro de dominio" class="rounded text-primary" checked><span>Registro de dominio</span></label>
+                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-extra" value="Integración con redes sociales" class="rounded text-primary" checked><span>Integración con redes sociales</span></label>
+                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-extra" value="Diseño de logo" class="rounded text-primary"><span>Diseño de logo</span></label>
+                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-extra" value="Redacción de textos" class="rounded text-primary"><span>Redacción de textos</span></label>
+                <label class="flex items-center gap-gutter-sm p-gutter-sm rounded border border-outline"><input type="checkbox" name="q-extra" value="Selección o edición de fotos" class="rounded text-primary"><span>Selección o edición de fotos</span></label>
               </div>
               <div class="flex items-center justify-between">
                 <button type="button" onclick="goQuoteStep(2)" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg">
@@ -466,31 +484,43 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             </div>
 
             <!-- Paso 4: Datos de contacto y resumen -->
-            <form id="quote-step-4" onsubmit="event.preventDefault(); document.getElementById(&#39;quote-sent-msg&#39;).classList.remove(&#39;hidden&#39;);" class="hidden flex-col gap-gutter-md">
+            <form id="quote-step-4" onsubmit="submitQuote(event)" class="hidden flex-col gap-gutter-md">
               <h3 class="font-title text-title-lg text-on-surface">4. Datos de contacto y resumen</h3>
               <div class="bg-surface-container border border-outline rounded p-gutter-md flex flex-col gap-gutter-xs">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-gutter-sm">
+                  <span class="font-body text-body-sm text-on-surface-variant">Plan:</span>
+                  <span id="q-sum-plan" class="font-body text-body-sm text-on-surface font-bold text-right">Negocio</span>
+                </div>
+                <div class="flex items-center justify-between gap-gutter-sm">
                   <span class="font-body text-body-sm text-on-surface-variant">Estimado de creación:</span>
-                  <span class="font-mono text-mono-sm text-primary font-bold">[₡ ______]</span>
+                  <span id="q-sum-setup" class="font-mono text-mono-sm text-primary font-bold tabular-nums">desde $600</span>
                 </div>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-gutter-sm">
                   <span class="font-body text-body-sm text-on-surface-variant">Mensualidad estimada:</span>
-                  <span class="font-mono text-mono-sm text-on-surface font-bold">[₡ ______] / mes</span>
+                  <span id="q-sum-monthly" class="font-mono text-mono-sm text-on-surface font-bold tabular-nums">$100 / mes</span>
                 </div>
+                <p id="q-sum-items" class="font-body text-body-sm text-on-surface-variant"></p>
                 <p class="font-body text-body-sm text-on-surface-variant pt-gutter-xs border-t border-outline">
-                  Nota: El precio final se confirma después de revisar los detalles de tu proyecto.
+                  Nota: los montos corresponden al plan base. Las funcionalidades y extras elegidos, y el precio final, se confirman después de revisar los detalles de tu proyecto.
                 </p>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-md">
-                <input type="text" required placeholder="Tu nombre y empresa" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-                <input type="email" required placeholder="Correo o WhatsApp" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+                <label for="q-name" class="sr-only">Tu nombre y empresa</label>
+                <input id="q-name" type="text" required autocomplete="name" placeholder="Tu nombre y empresa" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+                <label for="q-email" class="sr-only">Correo electrónico</label>
+                <input id="q-email" type="email" required autocomplete="email" placeholder="Correo electrónico" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+                <label for="q-phone" class="sr-only">Teléfono o WhatsApp (opcional)</label>
+                <input id="q-phone" type="tel" autocomplete="tel" placeholder="Teléfono o WhatsApp (opcional)" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md sm:col-span-2">
+                <label for="q-notes" class="sr-only">Detalles adicionales (opcional)</label>
+                <textarea id="q-notes" rows="2" placeholder="Cuéntanos más sobre tu proyecto (opcional)" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md sm:col-span-2"></textarea>
               </div>
-              <span id="quote-sent-msg" class="hidden font-body text-body-sm text-success">¡Solicitud enviada! Cristhian o Jaed te responderán muy pronto.</span>
+              <span id="quote-sent-msg" role="status" class="hidden font-body text-body-sm text-success">¡Solicitud enviada! Cristhian o Jaed te responderán muy pronto.</span>
+              <span id="quote-err" role="alert" class="hidden font-body text-body-sm text-error">No pudimos enviar tu solicitud. Inténtalo de nuevo o escríbenos a chreedco@gmail.com.</span>
               <div class="flex items-center justify-between">
                 <button type="button" onclick="goQuoteStep(3)" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-lg">
                   <span data-design-text-token="label-lg">Atrás</span>
                 </button>
-                <button type="submit" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg">
+                <button type="submit" id="quote-btn" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg disabled:opacity-60 disabled:cursor-wait">
                   <span data-design-text-token="label-lg">Enviar solicitud</span>
                 </button>
               </div>
@@ -625,7 +655,7 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
                 <span class="material-symbols-outlined text-primary" aria-hidden="true">expand_more</span>
               </summary>
               <p class="mt-gutter-sm font-body text-body-md text-on-surface-variant">
-                Sí. Trabajamos con clientes locales, nacionales e internacionales con seguimiento 100% digital y desde tu Área de Cliente.
+                Sí. Trabajamos con clientes locales, nacionales e internacionales con seguimiento 100% digital por correo, videollamada y mensajería.
               </p>
             </details>
           </div>
@@ -635,16 +665,21 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       <!-- 9. CONTACTO & 10. MI CUENTA -->
       <section id="contacto" class="max-w-[1200px] mx-auto px-page-margin lg:px-gutter-lg py-section-sm lg:py-section-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-xl">
         <!-- Contacto -->
-        <div class="lg:col-span-6 bg-surface-container-low border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md shadow-sm">
+        <div class="lg:col-span-8 lg:col-start-3 bg-surface-container-low border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md shadow-sm">
           <h2 class="font-headline text-headline-md text-on-surface">Contacto directo</h2>
           <p class="font-body text-body-md text-on-surface-variant">Escríbenos por formulario o por tu canal preferido.</p>
 
-          <form onsubmit="event.preventDefault(); document.getElementById(&#39;contact-ok&#39;).classList.remove(&#39;hidden&#39;);" class="flex flex-col gap-gutter-md">
-            <input type="text" required placeholder="Nombre completo" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <input type="email" required placeholder="Correo electrónico" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <textarea rows="3" required placeholder="¿En qué podemos ayudarte?" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md"></textarea>
-            <span id="contact-ok" class="hidden font-body text-body-sm text-success">Mensaje enviado. Te responderemos pronto.</span>
-            <button type="submit" data-component-id="button-cta-gold" data-component-type="button" data-component-variant="secondary" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg self-start">
+          <form id="contact-form" onsubmit="submitContact(event)" class="flex flex-col gap-gutter-md">
+            <label for="c-name" class="sr-only">Nombre completo</label>
+            <input id="c-name" name="nombre" type="text" required autocomplete="name" placeholder="Nombre completo" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+            <label for="c-email" class="sr-only">Correo electrónico</label>
+            <input id="c-email" name="correo" type="email" required autocomplete="email" placeholder="Correo electrónico" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
+            <label for="c-msg" class="sr-only">Mensaje</label>
+            <textarea id="c-msg" name="mensaje" rows="3" required placeholder="¿En qué podemos ayudarte?" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md"></textarea>
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+            <span id="contact-ok" role="status" class="hidden font-body text-body-sm text-success">Mensaje enviado. Te responderemos pronto.</span>
+            <span id="contact-err" role="alert" class="hidden font-body text-body-sm text-error">No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a chreedco@gmail.com.</span>
+            <button type="submit" id="contact-btn" data-component-id="button-cta-gold" data-component-type="button" data-component-variant="secondary" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-secondary text-on-secondary font-label text-label-lg self-start disabled:opacity-60 disabled:cursor-wait">
               <span data-design-text-token="label-lg">Contactar</span>
             </button>
           </form>
@@ -655,8 +690,8 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
           </div>
         </div>
 
-        <!-- 10. Mi Cuenta (Login / Registro) -->
-        <div id="mi-cuenta" class="lg:col-span-6 bg-surface-container border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md">
+        <!-- 10. Mi Cuenta (Login / Registro) — OCULTA hasta tener un sistema de cuentas real -->
+        <div id="mi-cuenta" hidden class="hidden lg:col-span-6bg-surface-container border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md">
           <div class="flex items-center justify-between gap-gutter-sm">
             <div class="flex items-center gap-gutter-sm">
               <div class="p-gutter-xs bg-surface rounded border border-outline shrink-0">
@@ -715,7 +750,6 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
             <a href="#proceso" class="hover:text-secondary">Proceso</a>
             <a href="#faq" class="hover:text-secondary">FAQ</a>
             <a href="#contacto" class="hover:text-secondary">Contacto</a>
-            <a href="#mi-cuenta" class="hover:text-secondary">Mi cuenta</a>
           </div>
         </div>
         <div class="pt-gutter-md border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-sm font-body text-body-sm">
@@ -729,10 +763,10 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       </div>
     </footer>
 
-    <!-- Botón flotante de WhatsApp -->
-    <a href="#contacto" aria-label="Escribir por WhatsApp" class="fixed bottom-gutter-lg right-gutter-lg z-40 inline-flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-full bg-secondary text-on-secondary shadow-md font-label text-label-sm hover:bg-secondary-container transition-colors duration-state-change">
-      <span class="material-symbols-outlined text-title-md" aria-hidden="true">chat</span>
-      <span>WhatsApp</span>
+    <!-- Botón flotante de contacto (cambiar a https://wa.me/506XXXXXXXX cuando exista número de WhatsApp) -->
+    <a href="#contacto" aria-label="Escríbenos" class="fixed bottom-gutter-lg right-gutter-lg z-40 inline-flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-full bg-secondary text-on-secondary shadow-md font-label text-label-sm hover:bg-secondary-container transition-colors duration-state-change">
+      <span class="material-symbols-outlined text-title-md" aria-hidden="true">mail</span>
+      <span>Escríbenos</span>
     </a>
 
   </div>
@@ -755,7 +789,142 @@ if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
       document.getElementById('step-label').textContent = labels[step - 1];
       document.getElementById('step-pct').textContent = (step * 25) + '%';
       document.getElementById('step-bar').style.width = (step * 25) + '%';
+      if (step === 4) updateQuoteSummary();
     }
+
+    // ===== Envío de formularios por correo (FormSubmit → chreedco@gmail.com) =====
+    const FORM_ENDPOINT = 'https://formsubmit.co/ajax/chreedco@gmail.com';
+
+    const PLANS = {
+      'Esencial':        { setup: 'desde $500',   monthly: '$80 / mes' },
+      'Negocio':         { setup: 'desde $600',   monthly: '$100 / mes' },
+      'Corporativo':     { setup: 'desde $1,000', monthly: '$150 / mes' },
+      'No estoy seguro': { setup: 'desde $500',   monthly: 'desde $80 / mes' }
+    };
+
+    function checkedValues(name) {
+      return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(function (el) { return el.value; });
+    }
+
+    function getQuoteData() {
+      const bizEl = document.querySelector('input[name="bizType"]:checked');
+      const plan = document.getElementById('q-plan').value;
+      return {
+        negocio: bizEl ? bizEl.value : '',
+        plan: plan,
+        precio: PLANS[plan] || PLANS['No estoy seguro'],
+        funcionalidades: checkedValues('q-feature'),
+        extras: checkedValues('q-extra')
+      };
+    }
+
+    function updateQuoteSummary() {
+      const q = getQuoteData();
+      document.getElementById('q-sum-plan').textContent = q.plan;
+      document.getElementById('q-sum-setup').textContent = q.precio.setup;
+      document.getElementById('q-sum-monthly').textContent = q.precio.monthly;
+      const parts = [];
+      if (q.funcionalidades.length) parts.push('Funcionalidades: ' + q.funcionalidades.join(', ') + '.');
+      if (q.extras.length) parts.push('Extras: ' + q.extras.join(', ') + '.');
+      document.getElementById('q-sum-items').textContent = parts.join(' ');
+    }
+
+    function selectPlan(plan) {
+      const sel = document.getElementById('q-plan');
+      if (sel) sel.value = plan;
+      goQuoteStep(1);
+    }
+
+    async function sendToEmail(payload) {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(function () { return {}; });
+      if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'Error de envío');
+    }
+
+    function setSending(btn, sending, okEl, errEl) {
+      btn.disabled = sending;
+      if (sending) { okEl.classList.add('hidden'); errEl.classList.add('hidden'); }
+    }
+
+    async function submitQuote(event) {
+      event.preventDefault();
+      const btn = document.getElementById('quote-btn');
+      const ok = document.getElementById('quote-sent-msg');
+      const err = document.getElementById('quote-err');
+      const q = getQuoteData();
+      const name = document.getElementById('q-name').value.trim();
+      setSending(btn, true, ok, err);
+      try {
+        await sendToEmail({
+          _subject: 'Nueva cotización web: ' + name + ' (plan ' + q.plan + ')',
+          _template: 'table',
+          _captcha: 'false',
+          _replyto: document.getElementById('q-email').value.trim(),
+          'Nombre y empresa': name,
+          'Correo': document.getElementById('q-email').value.trim(),
+          'Teléfono / WhatsApp': document.getElementById('q-phone').value.trim() || 'No indicado',
+          'Tipo de negocio': q.negocio,
+          'Plan': q.plan,
+          'Estimado de creación': q.precio.setup,
+          'Mensualidad estimada': q.precio.monthly,
+          'Funcionalidades': q.funcionalidades.join(', ') || 'Ninguna',
+          'Extras': q.extras.join(', ') || 'Ninguno',
+          'Detalles adicionales': document.getElementById('q-notes').value.trim() || 'Ninguno'
+        });
+        ok.classList.remove('hidden');
+        event.target.reset();
+      } catch (e) {
+        err.classList.remove('hidden');
+      } finally {
+        setSending(btn, false, ok, err);
+      }
+    }
+
+    async function submitContact(event) {
+      event.preventDefault();
+      const form = event.target;
+      if (form._honey && form._honey.value) return; // bot
+      const btn = document.getElementById('contact-btn');
+      const ok = document.getElementById('contact-ok');
+      const err = document.getElementById('contact-err');
+      setSending(btn, true, ok, err);
+      try {
+        await sendToEmail({
+          _subject: 'Nuevo mensaje de contacto: ' + form.nombre.value.trim(),
+          _template: 'table',
+          _captcha: 'false',
+          _replyto: form.correo.value.trim(),
+          'Nombre': form.nombre.value.trim(),
+          'Correo': form.correo.value.trim(),
+          'Mensaje': form.mensaje.value.trim()
+        });
+        ok.classList.remove('hidden');
+        form.reset();
+      } catch (e) {
+        err.classList.remove('hidden');
+      } finally {
+        setSending(btn, false, ok, err);
+      }
+    }
+
+    // ===== Menú móvil =====
+    function toggleMobileMenu(forceClose) {
+      const menu = document.getElementById('mobile-menu');
+      const btn = document.getElementById('mobile-menu-btn');
+      const icon = document.getElementById('mobile-menu-icon');
+      const open = forceClose ? false : menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      icon.textContent = open ? 'close' : 'menu';
+    }
+    document.querySelectorAll('#mobile-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { toggleMobileMenu(true); });
+    });
 
     function toggleAuth(mode) {
       const loginForm = document.getElementById('form-login');
