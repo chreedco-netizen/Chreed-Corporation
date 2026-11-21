@@ -521,7 +521,7 @@
           <td>${fdate(i.vencimiento)}</td>
           <td class="num"><b>${money(i.monto)}</b></td>
           <td>${badge(s)}${i.pagada ? `<div class="sub">${esc(i.medio)} · ${fdate(i.fechaPago)}</div>` : ''}</td>
-          <td>${i.pagada ? `<button class="icon-btn" title="Marcar como no pagada" aria-label="Marcar como no pagada" onclick="unpay('${i.id}')"><span class="ms">undo</span></button>` : `<button class="btn btn-ghost btn-sm" onclick="openPayForm('${i.id}')">Registrar pago</button>`}</td>
+          <td style="white-space:nowrap">${i.pagada ? `<button class="icon-btn" title="Marcar como no pagada" aria-label="Marcar como no pagada" onclick="unpay('${i.id}')"><span class="ms">undo</span></button>` : `<button class="btn btn-ghost btn-sm" onclick="openPayForm('${i.id}')">Registrar pago</button>`}<button class="icon-btn" title="Eliminar factura" aria-label="Eliminar factura" onclick="deleteInvoice('${i.id}')"><span class="ms">delete</span></button></td>
         </tr>`; }).join('') : '<tr><td colspan="8" class="empty">No hay facturas con esos filtros.</td></tr>';
     }
 
@@ -553,11 +553,12 @@
             <button class="btn btn-primary btn-sm" onclick="openInvoiceForm('${id}')"><span class="ms">add</span> Nueva factura</button>
             <button class="btn btn-ghost btn-sm" onclick="openClientForm('${id}')"><span class="ms">edit</span> Editar datos</button>
             <button class="btn btn-ghost btn-sm" onclick="toggleActive('${id}')"><span class="ms">${c.activo ? 'pause_circle' : 'play_circle'}</span> ${c.activo ? 'Marcar inactivo' : 'Reactivar'}</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--bad);border-color:#F5C2C2" onclick="deleteClient('${id}')"><span class="ms">delete</span> Eliminar cliente</button>
           </div>
           <div class="panel">
             <div class="panel-head"><h2>Facturas</h2><span class="sub">${invs.length}</span></div>
             ${invs.length ? invs.map(i => `<div class="row-item"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">#${i.numero} · vence ${fdate(i.vencimiento)}${i.pagada ? ' · pagada ' + fdate(i.fechaPago) + ' (' + esc(i.medio) + ')' : ''}</div></div>
-              <div style="display:flex;gap:8px;align-items:center"><b class="num">${money(i.monto)}</b>${badge(invStatus(i))}${i.pagada ? '' : `<button class="btn btn-ghost btn-sm" onclick="openPayForm('${i.id}')">Pagar</button>`}</div></div>`).join('') : '<div class="empty">Sin facturas.</div>'}
+              <div style="display:flex;gap:8px;align-items:center"><b class="num">${money(i.monto)}</b>${badge(invStatus(i))}${i.pagada ? '' : `<button class="btn btn-ghost btn-sm" onclick="openPayForm('${i.id}')">Pagar</button>`}<button class="icon-btn" title="Eliminar factura" aria-label="Eliminar factura" onclick="deleteInvoice('${i.id}')"><span class="ms">delete</span></button></div></div>`).join('') : '<div class="empty">Sin facturas.</div>'}
           </div>
         </div>`;
       document.getElementById('drawer').classList.add('open');
@@ -605,6 +606,25 @@
       busy(false); if (ok) closeModal();
     }
     function toggleActive(id) { const c = clientById(id); run(async () => check(await sb.from('clients').update({ activo: !c.activo }).eq('id', id)), c.activo ? 'Cliente marcado como inactivo' : 'Cliente reactivado'); }
+
+    // Eliminar (permanente, con confirmación)
+    async function deleteClient(id) {
+      const c = clientById(id); if (!c) return;
+      const n = clientInvoices(id).length;
+      const msg = `¿Eliminar a "${c.negocio}"${n ? ` y sus ${n} factura${n === 1 ? '' : 's'}` : ''}?\n\nEsta acción es permanente y no se puede deshacer.\nSi solo dejó de ser cliente, mejor usa "Marcar inactivo" para conservar su historial.`;
+      if (!confirm(msg)) return;
+      const ok = await run(async () => {
+        check(await sb.from('invoices').delete().eq('cliente_id', id));
+        check(await sb.from('clients').delete().eq('id', id));
+      }, 'Cliente eliminado');
+      if (ok) closeDrawer();
+    }
+    function deleteInvoice(invId) {
+      const i = db.invoices.find(x => x.id === invId); if (!i) return;
+      const c = clientById(i.clienteId);
+      if (!confirm(`¿Eliminar la factura #${i.numero} (${i.concepto}, ${money(i.monto)}) de ${c ? c.negocio : 'este cliente'}?\n\nEsta acción es permanente y no se puede deshacer.`)) return;
+      run(async () => check(await sb.from('invoices').delete().eq('id', invId)), 'Factura eliminada');
+    }
 
     function openInvoiceForm(clienteId) {
       const opts = db.clients.filter(c => c.activo || c.id === clienteId).sort((a, b) => a.negocio.localeCompare(b.negocio));
