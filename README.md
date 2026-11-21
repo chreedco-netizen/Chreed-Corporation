@@ -43,3 +43,12 @@ git push
 - **WhatsApp:** cuando exista número, cambiar el enlace del botón flotante (al final de
   `index.html`) por `https://wa.me/506XXXXXXXX`.
 - **Mi cuenta:** la sección está oculta (`id="mi-cuenta"`) hasta tener un sistema de cuentas real.
+
+## Panel de gestión (privado)
+
+- Dirección: https://chreed-corporation.vercel.app/panel/ (no aparece en el menú ni en Google).
+- Base de datos: Supabase (proyecto `chreed-panel`, creado desde Vercel → Storage).
+- Acceso: solo los correos de la tabla `staff` en Supabase. Para dar acceso a alguien nuevo:
+  1. Supabase → SQL Editor: `insert into public.staff (email, nombre) values ('correo', 'Nombre');`
+  2. Supabase → Authentication → Users → Add user → Send invitation.
+- La seguridad está en la base de datos (Row Level Security): sin un correo autorizado no se puede leer ni modificar nada.
