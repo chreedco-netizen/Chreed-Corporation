@@ -6,6 +6,9 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Panel Chreed — Gestión de clientes</title>
   <link rel="icon" type="image/png" href="../img/favicon-32.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#4A033D">
+  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=block" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -406,6 +409,9 @@
       show('app'); setView('resumen');
     }
     sb.auth.onAuthStateChange((_event, session) => { setTimeout(() => startApp(session), 0); });
+
+    // App instalable (escritorio y celular)
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { scope: './' }).catch(() => {});
 
     // ===== Estados =====
     const invStatus = i => i.pagada ? 'pagada' : (new Date(i.vencimiento + 'T00:00:00') < TODAY ? 'vencida' : 'pendiente');
