@@ -365,7 +365,8 @@
       const btn = document.getElementById('magic-btn'); btn.disabled = true;
       const { error } = await sb.auth.signInWithOtp({ email: emailEl.value.trim(), options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: false } });
       btn.disabled = false;
-      if (error) loginMsg('No pudimos enviar el enlace. Verifica que tu correo esté autorizado o espera unos minutos.', false);
+      if (error && (error.status === 429 || /rate limit/i.test(error.message))) loginMsg('Se alcanzó el límite de correos por hora. Espera unos 60 minutos y vuelve a intentarlo una sola vez.', false);
+      else if (error) loginMsg('No pudimos enviar el enlace. Revisa que el correo esté bien escrito y que esté autorizado.', false);
       else loginMsg('Listo. Revisa tu correo y abre el enlace desde este mismo navegador. Después crea tu contraseña con el botón "Contraseña".', true);
     });
 
