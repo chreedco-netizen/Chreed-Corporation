@@ -188,8 +188,12 @@
       <p>Acceso solo para personal autorizado de Chreed Corporation.</p>
       <form id="login-form">
         <label for="login-email" class="sub">Correo electrónico</label>
-        <input id="login-email" type="email" required autocomplete="email" placeholder="tu@correo.com">
-        <button class="btn btn-primary" id="login-btn"><span class="ms">mail</span> Enviarme el enlace de acceso</button>
+        <input id="login-email" type="email" required autocomplete="username" placeholder="tu@correo.com">
+        <label for="login-pass" class="sub">Contraseña</label>
+        <input id="login-pass" type="password" required autocomplete="current-password" placeholder="Tu contraseña">
+        <button class="btn btn-primary" id="login-btn"><span class="ms">login</span> Entrar</button>
+        <button type="button" class="btn btn-ghost" id="magic-btn"><span class="ms">mail</span> Enviarme un enlace de acceso</button>
+        <p class="sub" style="margin:0;text-align:center">Úsalo la primera vez o si olvidaste tu contraseña.</p>
         <div id="login-msg" class="msg" hidden></div>
       </form>
     </div>
@@ -201,7 +205,7 @@
       <button class="nav-btn" data-view="resumen"><span class="ms">dashboard</span> Resumen</button>
       <button class="nav-btn" data-view="clientes"><span class="ms">groups</span> Clientes</button>
       <button class="nav-btn" data-view="facturas"><span class="ms">receipt_long</span> Facturación</button>
-      <div class="side-foot"><strong>Panel interno</strong><div class="user-box"><span class="user-email"></span><br><button type="button" onclick="signOut()">Cerrar sesión</button></div></div>
+      <div class="side-foot"><strong>Panel interno</strong><div class="user-box"><span class="user-email"></span><br><button type="button" onclick="openPasswordForm()">Contraseña</button> <button type="button" onclick="signOut()">Cerrar sesión</button></div></div>
     </aside>
 
     <div>
@@ -210,7 +214,8 @@
         <button class="nav-btn" data-view="resumen"><span class="ms">dashboard</span> Resumen</button>
         <button class="nav-btn" data-view="clientes"><span class="ms">groups</span> Clientes</button>
         <button class="nav-btn" data-view="facturas"><span class="ms">receipt_long</span> Facturación</button>
-        <button class="nav-btn mobile-logout" onclick="signOut()" aria-label="Cerrar sesión"><span class="ms">logout</span></button>
+        <button class="nav-btn mobile-logout" onclick="openPasswordForm()" aria-label="Contraseña"><span class="ms">key</span></button>
+        <button class="nav-btn" onclick="signOut()" aria-label="Cerrar sesión"><span class="ms">logout</span></button>
       </nav>
 
       <main>
@@ -339,15 +344,50 @@
     function show(id) { ['loading-screen', 'login-screen', 'app'].forEach(x => document.getElementById(x).hidden = x !== id); }
     function loginMsg(text, ok) { const m = document.getElementById('login-msg'); m.hidden = false; m.className = 'msg ' + (ok ? 'ok' : 'err'); m.textContent = text; }
 
+    // Entrar con correo y contraseña
     document.getElementById('login-form').addEventListener('submit', async e => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-pass').value;
       const btn = document.getElementById('login-btn'); btn.disabled = true;
-      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: false } });
+      const { error } = await sb.auth.signInWithPassword({ email, password });
       btn.disabled = false;
-      if (error) loginMsg('No pudimos enviar el enlace. Verifica que tu correo esté autorizado.', false);
-      else loginMsg('Listo. Revisa tu correo y abre el enlace de acceso desde este mismo navegador.', true);
+      if (error) loginMsg('Correo o contraseña incorrectos. Si es tu primera vez, usa el botón del enlace por correo.', false);
     });
+
+    // Respaldo: enlace de acceso por correo (primera vez u olvido de contraseña)
+    document.getElementById('magic-btn').addEventListener('click', async () => {
+      const emailEl = document.getElementById('login-email');
+      if (!emailEl.value.trim() || !emailEl.checkValidity()) { emailEl.reportValidity(); return; }
+      const btn = document.getElementById('magic-btn'); btn.disabled = true;
+      const { error } = await sb.auth.signInWithOtp({ email: emailEl.value.trim(), options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: false } });
+      btn.disabled = false;
+      if (error) loginMsg('No pudimos enviar el enlace. Verifica que tu correo esté autorizado o espera unos minutos.', false);
+      else loginMsg('Listo. Revisa tu correo y abre el enlace desde este mismo navegador. Después crea tu contraseña con el botón "Contraseña".', true);
+    });
+
+    // Crear o cambiar contraseña (con la sesión iniciada)
+    function openPasswordForm() {
+      openModal(`<h2 id="modal-title">Crear o cambiar contraseña</h2>
+        <form onsubmit="savePassword(event)">
+          <p class="sub" style="margin:0">Con tu contraseña podrás entrar directamente, sin esperar el enlace por correo.</p>
+          <input type="text" autocomplete="username" value="${esc(document.querySelector('.user-email').textContent)}" hidden>
+          <div class="field"><label for="m-pass1">Nueva contraseña</label><input id="m-pass1" type="password" required minlength="8" autocomplete="new-password"></div>
+          <div class="field"><label for="m-pass2">Repetir contraseña</label><input id="m-pass2" type="password" required minlength="8" autocomplete="new-password"></div>
+          <p class="sub" style="margin:0">Mínimo 8 caracteres.</p>
+          <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary">Guardar contraseña</button></div>
+        </form>`);
+    }
+    async function savePassword(e) {
+      e.preventDefault();
+      const p1 = document.getElementById('m-pass1').value, p2 = document.getElementById('m-pass2').value;
+      if (p1 !== p2) { toast('Las contraseñas no coinciden'); return; }
+      busy(true);
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      busy(false);
+      if (error) { toast('No se pudo guardar: ' + error.message); return; }
+      closeModal(); toast('Contraseña guardada');
+    }
 
     async function signOut() { await sb.auth.signOut(); db = { clients: [], invoices: [] }; show('login-screen'); }
 
