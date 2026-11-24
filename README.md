@@ -70,3 +70,14 @@ git push
   Sin ellas, el botón "Pagar" no aparece.
 - Webhook en ONVO: `https://chreed-corporation.vercel.app/api/onvo-webhook`
   con los eventos `checkout_session.succeeded` y `payment_intent.succeeded`.
+
+## Avisos automáticos (Fase C)
+
+- Revisión diaria (Vercel Cron, `vercel.json`): 8:00 a. m. de Costa Rica → `api/recordatorios.js`.
+  - Por vencer: 3 días antes. Vencida: al día siguiente y cada 7 días. Pago recibido: pagos de los últimos 3 días.
+  - Resumen diario a chreedco@gmail.com cuando hay algo pendiente.
+- Pago en línea: `api/onvo-webhook.js` envía el aviso de pago recibido al instante.
+- Canales: correo (Gmail, variable `GMAIL_APP_PASSWORD` en Vercel) y notificaciones al celular
+  (los clientes las activan en Mi cuenta; las claves se generan solas y se guardan en Supabase).
+- Cada aviso se envía una sola vez (tabla `notif_log`). Estado y correo de prueba: Panel → Resumen.
+- Opcional: variable `CRON_SECRET` en Vercel para que solo Vercel pueda ejecutar la revisión diaria.

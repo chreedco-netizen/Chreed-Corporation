@@ -195,8 +195,58 @@
       try { const r = await fetch('/api/pagar', { cache: 'no-store' }); if (r.ok) pagosActivos = !!(await r.json()).activo; } catch (e) {}
       await loadPortal();
       render(); show('app');
+      refreshNotifState();
       afterPaymentReturn();
       if (!(user.user_metadata && user.user_metadata.tiene_contrasena)) setTimeout(() => openPasswordForm(true), 400);
+    }
+
+    // ===== Notificaciones al celular =====
+    let notifEstado = 'cargando';
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+    async function refreshNotifState() {
+      if (!pushSupported()) notifEstado = isIOS && !isStandalone ? 'ios-instalar' : 'no-soportado';
+      else if (Notification.permission === 'denied') notifEstado = 'bloqueado';
+      else {
+        try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); notifEstado = sub ? 'activo' : 'inactivo'; }
+        catch (e) { notifEstado = 'inactivo'; }
+      }
+      const el = document.getElementById('notif-card'); if (el) el.innerHTML = notifCardHtml();
+    }
+    function notifCardHtml() {
+      const t = '<div><b>🔔 Avisos en este dispositivo</b><div class="sub">';
+      if (notifEstado === 'activo') return t + 'Activados: te avisaremos cuando una factura esté por vencer, se venza o se registre tu pago.</div></div><button class="btn btn-ghost btn-sm" onclick="disableNotifications()">Desactivar</button>';
+      if (notifEstado === 'inactivo') return t + 'Recibe un aviso 3 días antes del vencimiento, si una factura se vence y cuando registremos tu pago.</div></div><button class="btn btn-primary btn-sm" onclick="enableNotifications(this)"><span class="ms">notifications_active</span> Activar avisos</button>';
+      if (notifEstado === 'bloqueado') return t + 'Las notificaciones están bloqueadas para este sitio. Puedes permitirlas en la configuración de tu navegador. Igual te enviaremos los avisos por correo.</div></div>';
+      if (notifEstado === 'ios-instalar') return t + 'En iPhone: toca <b>Compartir → Agregar a pantalla de inicio</b>, abre "Mi cuenta" desde ese ícono y activa los avisos ahí. Mientras tanto, te avisamos por correo.</div></div>';
+      if (notifEstado === 'no-soportado') return t + 'Este navegador no permite notificaciones. Te enviaremos los avisos por correo.</div></div>';
+      return t + 'Revisando…</div></div>';
+    }
+    function b64ToUint8(b64) { const p = '='.repeat((4 - b64.length % 4) % 4); const s = atob((b64 + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from([...s].map(c => c.charCodeAt(0))); }
+    async function enableNotifications(btn) {
+      if (btn) btn.disabled = true;
+      try {
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') { await refreshNotifState(); return; }
+        const kr = await fetch('/api/push-key', { cache: 'no-store' });
+        const { publicKey } = await kr.json();
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToUint8(publicKey) });
+        const j = sub.toJSON();
+        const { error } = await sb.rpc('portal_push_subscribe', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+        if (error) throw error;
+        toast('¡Avisos activados en este dispositivo!');
+      } catch (e) { console.error(e); toast('No se pudieron activar los avisos. Intenta de nuevo.'); }
+      await refreshNotifState();
+    }
+    async function disableNotifications() {
+      try {
+        const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription();
+        if (sub) { await sb.rpc('portal_push_unsubscribe', { p_endpoint: sub.endpoint }); await sub.unsubscribe(); }
+        toast('Avisos desactivados en este dispositivo');
+      } catch (e) { toast('No se pudo desactivar. Intenta de nuevo.'); }
+      await refreshNotifState();
     }
 
     // ===== Pago en línea (ONVO) =====
@@ -275,6 +325,8 @@
           <div class="section-head"><h2>Historial de pagos</h2><span class="sub">${inv.filter(i => i.pagada).length} pagadas</span></div>
           ${inv.filter(i => i.pagada).length ? inv.filter(i => i.pagada).map(i => `<div class="row"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">Factura #${i.numero} · pagada el ${fdate(i.fecha_pago)}${i.medio ? ' · ' + esc(i.medio) : ''}</div></div><div><span class="num">${money(i.monto)}</span>${badge('pagada')}</div></div>`).join('') : '<div class="empty">Aún no hay pagos registrados.</div>'}
         </div>
+
+        <div class="card help section" id="notif-card">${notifCardHtml()}</div>
 
         <div class="card help">
           <div><b>¿Necesitas ayuda o un cambio en tu página?</b><div class="sub">Escríbenos y te respondemos lo antes posible.</div></div>

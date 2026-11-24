@@ -17,10 +17,16 @@ function supabaseAdmin() {
     url, key, headers,
     async get(path) { const r = await fetch(url + '/rest/v1/' + path, { headers }); if (!r.ok) throw new Error('db ' + r.status); return r.json(); },
     async patch(path, body) { const r = await fetch(url + '/rest/v1/' + path, { method: 'PATCH', headers: { ...headers, Prefer: 'return=representation' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error('db ' + r.status); return r.json(); },
-    async insertIgnore(table, row) {
-      const r = await fetch(url + '/rest/v1/' + table + '?on_conflict=id', { method: 'POST', headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify(row) });
+    async insertIgnore(table, row, conflict) {
+      const r = await fetch(url + '/rest/v1/' + table + '?on_conflict=' + (conflict || 'id'), { method: 'POST', headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=representation' }, body: JSON.stringify(row) });
       if (!r.ok) throw new Error('db ' + r.status);
       return r.json();
+    },
+    async del(path) { const r = await fetch(url + '/rest/v1/' + path, { method: 'DELETE', headers }); if (!r.ok) throw new Error('db ' + r.status); },
+    async isStaff(email) {
+      if (!email) return false;
+      const r = await fetch(url + '/rest/v1/staff?select=email&email=eq.' + encodeURIComponent(email), { headers });
+      return r.ok && (await r.json()).length > 0;
     },
     async userEmail(token) {
       if (!token) return '';

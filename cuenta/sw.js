@@ -1,4 +1,4 @@
-// Servicio mínimo de la app "Mi cuenta Chreed".
+// Servicio de la app "Mi cuenta Chreed": aviso sin conexión y notificaciones al celular.
 // No guarda copias de los datos: todo se consulta en línea, para que la información
 // de facturas nunca quede almacenada en el dispositivo.
 self.addEventListener('install', () => self.skipWaiting());
@@ -15,4 +15,26 @@ self.addEventListener('fetch', event => {
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     ))
   );
+});
+
+// Notificaciones
+self.addEventListener('push', event => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { body: event.data && event.data.text() }; }
+  event.waitUntil(self.registration.showNotification(d.title || 'Chreed Corporation', {
+    body: d.body || '',
+    icon: '/img/icon-192.png',
+    badge: '/img/favicon-32.png',
+    data: { url: d.url || '/cuenta/' },
+    lang: 'es'
+  }));
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/cuenta/';
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if (c.url.includes('/cuenta/') && 'focus' in c) return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
 });

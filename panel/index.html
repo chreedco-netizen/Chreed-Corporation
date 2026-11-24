@@ -243,6 +243,10 @@
               <div class="panel-body" id="upcoming-list"></div>
             </div>
           </div>
+          <div class="panel" style="margin-top:14px">
+            <div class="panel-head"><h2>🔔 Avisos automáticos a clientes</h2><button class="btn btn-ghost btn-sm" onclick="sendTestEmail(this)"><span class="ms">send</span> Enviar correo de prueba</button></div>
+            <div class="panel-body" id="avisos-box"><div class="empty">Cargando estado…</div></div>
+          </div>
         </section>
 
         <!-- CLIENTES -->
@@ -447,7 +451,34 @@
       if (view === 'facturas') renderFacturas();
     }
 
+    // ===== Avisos automáticos (estado y prueba) =====
+    const AVISO_NOMBRE = { previo: 'Por vencer', pagada: 'Pago recibido' };
+    async function staffFetch(path, opts) {
+      const { data: s } = await sb.auth.getSession();
+      return fetch(path, { ...(opts || {}), headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (s.session ? s.session.access_token : '') } });
+    }
+    let avisosCargados = false;
+    async function loadAvisos(force) {
+      const box = document.getElementById('avisos-box'); if (!box || (avisosCargados && !force)) return;
+      avisosCargados = true;
+      try {
+        const r = await staffFetch('/api/avisos'); const a = await r.json();
+        if (!r.ok) throw new Error(a.error);
+        const nombre = c => c.startsWith('vencida-') ? 'Vencida (' + c.slice(8) + ' días)' : (AVISO_NOMBRE[c] || c);
+        box.innerHTML = `<div class="row-item"><div><div class="biz">Correo desde ${esc('chreedco@gmail.com')}</div><div class="sub">3 días antes del vencimiento, al día siguiente de vencida y cada 7 días, y al registrar un pago. Resumen diario a las 8:00 a. m.</div></div><div>${a.correo ? '<span class="badge b-ok">Conectado</span>' : '<span class="badge b-warn">Falta conectar Gmail</span>'}</div></div>
+          <div class="row-item"><div><div class="biz">Notificaciones al celular</div><div class="sub">Clientes que activaron los avisos en "Mi cuenta".</div></div><div><b>${a.dispositivos}</b> dispositivo${a.dispositivos === 1 ? '' : 's'}</div></div>
+          ${a.recientes.length ? '<div class="row-item"><div class="biz">Últimos avisos enviados</div></div>' + a.recientes.map(x => `<div class="row-item"><div><div>${esc(x.negocio || '—')} · #${x.numero}</div><div class="sub">${nombre(x.clave)} · ${esc(x.canales || '')}</div></div><div class="sub">${new Date(x.fecha).toLocaleString('es-CR', { dateStyle: 'medium', timeStyle: 'short' })}</div></div>`).join('') : '<div class="empty">Todavía no se ha enviado ningún aviso.</div>'}`;
+      } catch (e) { avisosCargados = false; box.innerHTML = '<div class="empty">No se pudo cargar el estado de los avisos.</div>'; }
+    }
+    async function sendTestEmail(btn) {
+      btn.disabled = true;
+      try { const r = await staffFetch('/api/avisos', { method: 'POST' }); const a = await r.json(); toast(r.ok ? 'Correo de prueba enviado a ' + a.enviadoA : (a.error || 'No se pudo enviar')); }
+      catch (e) { toast('No se pudo enviar el correo de prueba'); }
+      btn.disabled = false;
+    }
+
     function renderResumen() {
+      loadAvisos();
       document.getElementById('today-label').textContent = 'Hoy, ' + TODAY.toLocaleDateString('es-CR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       const activos = db.clients.filter(c => c.activo);
       const mrr = activos.reduce((s, c) => s + PLANS[c.plan].mensual, 0);

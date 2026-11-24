@@ -5,6 +5,7 @@
 
 const crypto = require('crypto');
 const { env, supabaseAdmin, onvo, todayCR } = require('./_lib');
+const { notifyInvoice } = require('./_notify');
 
 function readRaw(req) {
   return new Promise((resolve, reject) => {
@@ -89,7 +90,15 @@ module.exports = async (req, res) => {
       }
     }
 
-    await db.patch('invoices?id=eq.' + inv.id + '&pagada=eq.false', { pagada: true, fecha_pago: todayCR(), medio, onvo_payment_intent_id: paymentIntentId });
+    const updated = await db.patch('invoices?id=eq.' + inv.id + '&pagada=eq.false', { pagada: true, fecha_pago: todayCR(), medio, onvo_payment_intent_id: paymentIntentId });
+
+    // Aviso inmediato de "pago recibido" (si falla, la revisión diaria lo envía después)
+    if (updated.length) {
+      try {
+        const full = await db.get('invoices?select=id,numero,concepto,monto,vencimiento,fecha_pago,medio,clients(negocio,contacto,correo)&id=eq.' + inv.id);
+        if (full[0]) await notifyInvoice(db, full[0], full[0].clients || {}, 'pagada', 'pagada');
+      } catch (e) { console.error('aviso de pago', e && e.message); }
+    }
     return res.status(200).json({ ok: true, pagada: true });
   } catch (e) {
     // Error temporal: responder 500 para que ONVO reintente (el registro del aviso se libera)

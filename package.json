@@ -1,0 +1,9 @@
+{
+  "name": "chreed-corporation",
+  "private": true,
+  "description": "Sitio web, Panel Chreed y Mi cuenta. Las dependencias solo las usan los servicios de /api.",
+  "dependencies": {
+    "nodemailer": "6.9.14",
+    "web-push": "3.6.7"
+  }
+}
