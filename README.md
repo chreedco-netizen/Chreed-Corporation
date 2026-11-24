@@ -60,3 +60,13 @@ git push
 - Acceso: en el panel, ficha del cliente → "Invitar al portal". Genera un enlace personal (vence en 1 hora)
   mediante `api/portal-invite.js`, que usa las variables `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de Vercel.
 - El cliente debe tener un correo en su ficha; ese correo es su usuario.
+
+## Pagos en línea (ONVO) — Fase B
+
+- Botón "Pagar" en Mi cuenta → `api/pagar.js` crea la sesión de pago en ONVO con el monto de la base de datos.
+- ONVO avisa a `api/onvo-webhook.js` (firma `X-Onvo-Signature` verificada); el servidor reconfirma con ONVO
+  y marca la factura como pagada (medio "Tarjeta" o "SINPE Móvil").
+- Variables en Vercel (las pega el dueño de la cuenta): `ONVO_SECRET_KEY` y `ONVO_WEBHOOK_SECRET`.
+  Sin ellas, el botón "Pagar" no aparece.
+- Webhook en ONVO: `https://chreed-corporation.vercel.app/api/onvo-webhook`
+  con los eventos `checkout_session.succeeded` y `payment_intent.succeeded`.

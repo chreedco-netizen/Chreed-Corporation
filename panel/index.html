@@ -698,7 +698,7 @@
         <form onsubmit="savePay(event, '${invId}')">
           <p style="margin:0">${esc(c ? c.negocio : '')} · ${esc(i.concepto)}<br><b style="font-size:20px">${money(i.monto)}</b></p>
           <div class="field-row">
-            <div class="field"><label for="m-medio">Medio de pago</label><select id="m-medio"><option>Transferencia</option><option>Tarjeta</option><option>PayPal</option></select></div>
+            <div class="field"><label for="m-medio">Medio de pago</label><select id="m-medio"><option>Transferencia</option><option>SINPE Móvil</option><option>Tarjeta</option><option>PayPal</option></select></div>
             <div class="field"><label for="m-fecha">Fecha del pago</label><input id="m-fecha" type="date" required value="${iso(TODAY)}"></div>
           </div>
           <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary">Confirmar pago</button></div>

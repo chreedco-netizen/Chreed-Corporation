@@ -180,18 +180,52 @@
     });
     async function signOut() { await sb.auth.signOut(); data = { clientes: [] }; show('login-screen'); }
 
-    let started = false;
-    async function start(session) {
-      if (!session) { started = false; user = null; show('login-screen'); return; }
-      if (started) return;
-      started = true; user = session.user;
+    let started = false, pagosActivos = false;
+    async function loadPortal() {
       try {
         const { data: d, error } = await sb.rpc('portal_get');
         if (error) throw error;
         data = d || { clientes: [] };
       } catch (e) { console.error(e); data = { clientes: [], error: true }; }
+    }
+    async function start(session) {
+      if (!session) { started = false; user = null; show('login-screen'); return; }
+      if (started) return;
+      started = true; user = session.user;
+      try { const r = await fetch('/api/pagar', { cache: 'no-store' }); if (r.ok) pagosActivos = !!(await r.json()).activo; } catch (e) {}
+      await loadPortal();
       render(); show('app');
+      afterPaymentReturn();
       if (!(user.user_metadata && user.user_metadata.tiene_contrasena)) setTimeout(() => openPasswordForm(true), 400);
+    }
+
+    // ===== Pago en línea (ONVO) =====
+    async function payInvoice(numero, btn) {
+      if (btn) { btn.disabled = true; btn.textContent = 'Abriendo pago…'; }
+      try {
+        const { data: s } = await sb.auth.getSession();
+        const r = await fetch('/api/pagar', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (s.session ? s.session.access_token : '') }, body: JSON.stringify({ numero }) });
+        const out = await r.json().catch(() => ({}));
+        if (r.ok && out.url) { location.href = out.url; return; }
+        toast(out.error || 'No pudimos abrir la página de pago');
+      } catch (e) { toast('No pudimos abrir la página de pago. Revisa tu conexión.'); }
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span class="ms">credit_card</span> Pagar'; }
+    }
+    async function afterPaymentReturn() {
+      const p = new URLSearchParams(location.search);
+      const estado = p.get('pago'), num = parseInt(p.get('f'), 10);
+      if (!estado) return;
+      history.replaceState(null, '', location.pathname);
+      if (estado === 'cancelado') { toast('Pago cancelado. Puedes intentarlo de nuevo cuando quieras.'); return; }
+      const pagada = () => data.clientes.some(c => (c.facturas || []).some(i => i.numero === num && i.pagada));
+      if (pagada()) { toast('¡Pago recibido! Gracias.'); return; }
+      openModal(`<h2 id="modal-title">Estamos confirmando tu pago…</h2><p style="margin:0">Esto toma unos segundos. Si pagaste con SINPE Móvil, puede tardar unos minutos más. Puedes cerrar esta ventana: tu factura aparecerá como <b>Pagada</b> en cuanto se confirme.</p><div class="form-actions"><button class="btn btn-ghost" onclick="closeModal()">Cerrar</button></div>`);
+      for (let k = 0; k < 12; k++) {
+        await new Promise(r => setTimeout(r, 5000));
+        await loadPortal();
+        if (pagada()) { render(); closeModal(); toast('¡Pago recibido! Gracias.'); return; }
+      }
+      render();
     }
     sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => start(session), 0); });
 
@@ -233,7 +267,8 @@
 
         <div class="card section">
           <div class="section-head"><h2>Facturas por pagar</h2>${unpaid.length ? `<button class="btn btn-gold btn-sm" onclick="howToPay()"><span class="ms">payments</span> Cómo pagar</button>` : ''}</div>
-          ${unpaid.length ? unpaid.map(i => `<div class="row"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">Factura #${i.numero} · vence el ${fdate(i.vencimiento)}</div></div><div><span class="num">${money(i.monto)}</span>${badge(invStatus(i))}</div></div>`).join('') : '<div class="empty">🎉 No tienes facturas pendientes. ¡Gracias!</div>'}
+          ${unpaid.length ? unpaid.map(i => `<div class="row"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">Factura #${i.numero} · vence el ${fdate(i.vencimiento)}</div></div><div><span class="num">${money(i.monto)}</span>${badge(invStatus(i))}${pagosActivos ? `<button class="btn btn-primary btn-sm" onclick="payInvoice(${Number(i.numero)}, this)"><span class="ms">credit_card</span> Pagar</button>` : ''}</div></div>`).join('') : '<div class="empty">🎉 No tienes facturas pendientes. ¡Gracias!</div>'}
+          ${unpaid.length && pagosActivos ? `<div class="sub" style="padding:10px 16px;border-top:1px solid var(--primary-line)"><span class="ms" style="font-size:16px">lock</span> Pago seguro con tarjeta o SINPE Móvil a través de ONVO. Chreed Corporation no recibe ni guarda los datos de tu tarjeta.</div>` : ''}
         </div>
 
         <div class="card section">
@@ -258,13 +293,13 @@
       const unpaid = (c.facturas || []).filter(i => !i.pagada);
       const nums = unpaid.map(i => '#' + i.numero).join(', ');
       openModal(`<h2 id="modal-title">Cómo pagar</h2>
-        <p style="margin:0">Aceptamos estos medios de pago:</p>
+        ${pagosActivos ? `<p style="margin:0 0 8px"><b>Lo más rápido:</b> pulsa <b>"Pagar"</b> junto a la factura y paga en línea con <b>tarjeta</b> o <b>SINPE Móvil</b>. Tu factura se marca como pagada automáticamente.</p><p style="margin:0">También aceptamos:</p>` : `<p style="margin:0">Aceptamos estos medios de pago:</p>`}
         <ul>
           <li><b>Transferencia bancaria</b></li>
-          <li><b>Tarjeta</b> de crédito o débito, mediante un enlace de pago seguro</li>
+          ${pagosActivos ? '' : '<li><b>Tarjeta</b> de crédito o débito, mediante un enlace de pago seguro</li>'}
           <li><b>PayPal</b></li>
         </ul>
-        <p class="sub" style="margin:0 0 12px">Escríbenos indicando el número de factura y el medio que prefieres, y te enviamos los datos o el enlace de pago. Cuando registremos tu pago, lo verás aquí como <b>Pagada</b>.</p>
+        <p class="sub" style="margin:0 0 12px">Para estos medios, escríbenos indicando el número de factura y te enviamos los datos de pago. Cuando registremos tu pago, lo verás aquí como <b>Pagada</b>.</p>
         <div class="form-actions">
           <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
           <a class="btn btn-primary" href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Pago de factura ' + nums + ' — ' + (c.negocio || ''))}&body=${encodeURIComponent('Hola, quiero pagar la(s) factura(s) ' + nums + '. Medio de pago preferido: ')}"><span class="ms">mail</span> Solicitar datos de pago</a>
