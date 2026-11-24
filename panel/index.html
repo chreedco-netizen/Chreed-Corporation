@@ -555,6 +555,11 @@
             <button class="btn btn-ghost btn-sm" onclick="toggleActive('${id}')"><span class="ms">${c.activo ? 'pause_circle' : 'play_circle'}</span> ${c.activo ? 'Marcar inactivo' : 'Reactivar'}</button>
             <button class="btn btn-ghost btn-sm" style="color:var(--bad);border-color:#F5C2C2" onclick="deleteClient('${id}')"><span class="ms">delete</span> Eliminar cliente</button>
           </div>
+          <div class="panel" style="padding:14px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+            <div><div class="biz"><span class="ms" style="color:var(--primary)">smartphone</span> Portal del cliente</div>
+              <div class="sub">${c.portal_invitado_at ? 'Último enlace generado: ' + fdate(String(c.portal_invitado_at).slice(0, 10)) : (c.correo ? 'Aún no tiene acceso a "Mi cuenta".' : 'Agrega su correo (Editar datos) para darle acceso.')}</div></div>
+            <button class="btn btn-gold btn-sm" onclick="invitePortal('${id}')" ${c.correo ? '' : 'disabled'}><span class="ms">key</span> ${c.portal_invitado_at ? 'Generar nuevo enlace' : 'Invitar al portal'}</button>
+          </div>
           <div class="panel">
             <div class="panel-head"><h2>Facturas</h2><span class="sub">${invs.length}</span></div>
             ${invs.length ? invs.map(i => `<div class="row-item"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">#${i.numero} · vence ${fdate(i.vencimiento)}${i.pagada ? ' · pagada ' + fdate(i.fechaPago) + ' (' + esc(i.medio) + ')' : ''}</div></div>
@@ -619,6 +624,35 @@
       }, 'Cliente eliminado');
       if (ok) closeDrawer();
     }
+    // ===== Portal del cliente: generar enlace de acceso =====
+    async function invitePortal(id) {
+      const c = clientById(id); if (!c) return;
+      if (!confirm(`Se generará un enlace de acceso a "Mi cuenta" para ${c.negocio} (${c.correo}).\n\nEl enlace es personal: compártelo solo con ese cliente. ¿Continuar?`)) return;
+      toast('Generando enlace…');
+      try {
+        const { data: s } = await sb.auth.getSession();
+        const r = await fetch('/api/portal-invite', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (s.session ? s.session.access_token : '') }, body: JSON.stringify({ clienteId: id }) });
+        const out = await r.json().catch(() => ({}));
+        if (!r.ok) { toast(out.error || 'No se pudo generar el enlace'); return; }
+        await loadData(); render(); openDrawer(id);
+        const nombre = (c.contacto || '').trim().split(/\s+/)[0];
+        const texto = `Hola${nombre ? ' ' + nombre : ''}, te compartimos tu acceso a "Mi cuenta" de Chreed Corporation, donde puedes ver tu plan, tus facturas y el estado de tus pagos:\n\n${out.link}\n\nAl entrar, crea tu contraseña para ingresar después en https://chreed-corporation.vercel.app/cuenta/ . El enlace es personal y vence 1 hora después de enviado.`;
+        let tel = String(c.telefono || '').replace(/\D/g, ''); if (tel.length === 8) tel = '506' + tel;
+        openModal(`<h2 id="modal-title">Enlace de acceso listo</h2>
+          <form onsubmit="return false">
+            <p style="margin:0">${out.tipo === 'invitacion' ? 'Invitación' : 'Enlace de acceso'} para <b>${esc(c.negocio)}</b> (${esc(out.correo)}). Envíaselo por el medio que prefieras:</p>
+            <textarea id="m-link-text" rows="6" readonly>${esc(texto)}</textarea>
+            <p class="sub" style="margin:0">⚠️ Es personal, sirve una sola vez y vence en 1 hora: envíalo ahora. Si vence o se pierde, genera uno nuevo.</p>
+            <div class="form-actions" style="flex-wrap:wrap">
+              <button type="button" class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+              <button type="button" class="btn btn-ghost" onclick="navigator.clipboard.writeText(document.getElementById('m-link-text').value).then(()=>toast('Mensaje copiado'))"><span class="ms">content_copy</span> Copiar</button>
+              <a class="btn btn-ghost" target="_blank" rel="noopener" href="mailto:${esc(out.correo)}?subject=${encodeURIComponent('Tu acceso a Mi cuenta — Chreed Corporation')}&body=${encodeURIComponent(texto)}"><span class="ms">mail</span> Correo</a>
+              <a class="btn btn-primary" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(texto)}"><span class="ms">chat</span> WhatsApp</a>
+            </div>
+          </form>`);
+      } catch (e) { toast('No se pudo generar el enlace. Revisa tu conexión.'); }
+    }
+
     function deleteInvoice(invId) {
       const i = db.invoices.find(x => x.id === invId); if (!i) return;
       const c = clientById(i.clienteId);

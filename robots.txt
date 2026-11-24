@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /panel/
+Disallow: /cuenta/
+Disallow: /api/
 
 Sitemap: https://chreed-corporation.vercel.app/sitemap.xml

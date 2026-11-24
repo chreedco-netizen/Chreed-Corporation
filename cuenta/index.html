@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Mi cuenta — Chreed Corporation</title>
+  <link rel="icon" type="image/png" href="../img/favicon-32.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#4A033D">
+  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <style>
+    :root {
+      --primary: #4A033D; --primary-2: #6B1A5C; --primary-soft: #F6F1F5; --primary-line: #EBE3E9;
+      --gold: #E8B04B; --gold-soft: #FDF5E6; --gold-ink: #5C3D0A;
+      --ink: #1F1A1E; --muted: #5A4F57; --line: #DDD6DC; --bg: #FAF7F9; --card: #FFFFFF;
+      --ok: #15803D; --ok-soft: #DCFCE7; --warn: #B45309; --warn-soft: #FEF3C7; --bad: #B91C1C; --bad-soft: #FEE2E2;
+      --radius: 12px; --shadow: 0 1px 2px rgba(74,3,61,.06), 0 4px 16px rgba(74,3,61,.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-family: Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); font-size: 15px; line-height: 1.5; }
+    [hidden] { display: none !important; }
+    h1, h2, h3 { font-family: "Plus Jakarta Sans", Inter, sans-serif; margin: 0; }
+    button, input { font: inherit; color: inherit; }
+    a { color: var(--primary); }
+    .ms { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; width: 1em; height: 1em; overflow: hidden; vertical-align: middle; font-feature-settings: "liga"; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; border-radius: 9px; padding: 10px 16px; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .btn .ms { font-size: 18px; }
+    .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-2); }
+    .btn-gold { background: var(--gold); color: var(--ink); } .btn-gold:hover { background: #F0C46F; }
+    .btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); } .btn-ghost:hover { background: var(--primary-soft); }
+    .btn-sm { padding: 6px 12px; font-size: 14px; }
+    .btn:disabled { opacity: .6; cursor: wait; }
+    input { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; background: #fff; }
+    input:focus, .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+    .sub { color: var(--muted); font-size: 13px; }
+    .msg { border-radius: 9px; padding: 10px 12px; font-size: 14px; }
+    .msg.ok { background: var(--ok-soft); color: var(--ok); } .msg.err { background: var(--bad-soft); color: var(--bad); }
+
+    /* Pantallas */
+    .center { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .login { background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .card { background: var(--card); border: 1px solid var(--primary-line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .login-card { width: min(420px, 100%); padding: 28px; border: 0; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .logo-wrap { background: var(--primary); border-radius: 10px; padding: 14px; display: flex; justify-content: center; margin-bottom: 20px; }
+    .logo-wrap img { height: 34px; }
+    .login-card h1 { font-size: 22px; color: var(--primary); margin-bottom: 4px; }
+    .login-card form { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+    /* App */
+    header.top { background: var(--primary); color: #fff; position: sticky; top: 0; z-index: 20; }
+    header.top .bar { max-width: 960px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    header.top img { height: 28px; }
+    header.top .actions { display: flex; gap: 6px; }
+    .icon-btn { border: 1px solid rgba(255,255,255,.3); background: transparent; color: #fff; border-radius: 8px; padding: 7px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+    .icon-btn:hover { background: rgba(255,255,255,.1); }
+    main { max-width: 960px; margin: 0 auto; padding: 20px 16px 48px; }
+    .hello h1 { font-size: 24px; color: var(--primary); }
+    .hello p { margin: 2px 0 18px; color: var(--muted); }
+    .biz-switch { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .kpi { padding: 14px; }
+    .kpi .label { color: var(--muted); font-size: 13px; display: flex; gap: 6px; align-items: center; }
+    .kpi .value { font-family: "Plus Jakarta Sans", sans-serif; font-size: 22px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .kpi.accent { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .kpi.accent .label { color: rgba(255,255,255,.75); } .kpi.accent .value { color: var(--gold); }
+    .status-ok .value { color: var(--ok); } .status-warn .value { color: var(--warn); } .status-bad .value { color: var(--bad); }
+    .section { margin-bottom: 18px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--primary-line); flex-wrap: wrap; }
+    .section-head h2 { font-size: 17px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 16px; border-bottom: 1px solid var(--primary-line); flex-wrap: wrap; }
+    .row:last-child { border-bottom: 0; }
+    .row > div:last-child { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .biz { font-weight: 600; }
+    .num { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
+    .empty { padding: 24px 16px; text-align: center; color: var(--muted); }
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .b-ok { background: var(--ok-soft); color: var(--ok); } .b-warn { background: var(--warn-soft); color: var(--warn); } .b-bad { background: var(--bad-soft); color: var(--bad); } .b-off { background: #EEE; color: #666; }
+    .plan { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--primary-soft); color: var(--primary); }
+    .help { padding: 16px; display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; justify-content: space-between; }
+    .notice { background: var(--gold-soft); border: 1px solid #F3D9A4; color: var(--gold-ink); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 18px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+    /* Modal */
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 60; padding: 16px; background: rgba(31,26,30,.45); }
+    .modal.open { display: flex; }
+    .modal-card { background: #fff; border-radius: 14px; width: min(460px, 100%); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); padding: 20px; }
+    .modal-card h2 { font-size: 19px; color: var(--primary); margin-bottom: 8px; }
+    .modal-card form { display: flex; flex-direction: column; gap: 10px; }
+    .modal-card ul { padding-left: 18px; margin: 8px 0; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; transition: all .2s; z-index: 70; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%); }
+
+    @media (max-width: 760px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .icon-btn .lbl { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="center" id="loading-screen"><span class="sub">Cargando…</span></div>
+
+  <!-- Inicio de sesión -->
+  <div class="center login" id="login-screen" hidden>
+    <div class="card login-card">
+      <div class="logo-wrap"><img src="../img/logo-horizontal.png" alt="Chreed Co."></div>
+      <h1>Mi cuenta</h1>
+      <p class="sub" style="font-size:14px;margin:0">Consulta tu plan, tus facturas y el estado de tus pagos con Chreed Corporation.</p>
+      <form id="login-form">
+        <label for="login-email" class="sub">Correo electrónico</label>
+        <input id="login-email" type="email" required autocomplete="username" placeholder="tu@correo.com">
+        <label for="login-pass" class="sub">Contraseña</label>
+        <input id="login-pass" type="password" required autocomplete="current-password" placeholder="Tu contraseña">
+        <button class="btn btn-primary" id="login-btn"><span class="ms">login</span> Entrar</button>
+        <button type="button" class="btn btn-ghost" id="magic-btn"><span class="ms">mail</span> Olvidé mi contraseña</button>
+        <div id="login-msg" class="msg" hidden></div>
+      </form>
+      <p class="sub" style="margin:16px 0 0;text-align:center">¿Aún no tienes acceso? Pídelo a Chreed Corporation: <a href="mailto:chreedco@gmail.com">chreedco@gmail.com</a></p>
+      <p class="sub" style="margin:8px 0 0;text-align:center"><a href="../">← Volver al sitio web</a></p>
+    </div>
+  </div>
+
+  <!-- App del cliente -->
+  <div id="app" hidden>
+    <header class="top">
+      <div class="bar">
+        <img src="../img/logo-horizontal.png" alt="Chreed Co.">
+        <div class="actions">
+          <button class="icon-btn" onclick="openPasswordForm()" aria-label="Contraseña"><span class="ms">key</span><span class="lbl">Contraseña</span></button>
+          <button class="icon-btn" onclick="signOut()" aria-label="Cerrar sesión"><span class="ms">logout</span><span class="lbl">Salir</span></button>
+        </div>
+      </div>
+    </header>
+    <main id="content"></main>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-card" id="modal-card"></div></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    // Conexión pública (los datos los protege la base de datos: cada cliente solo recibe los suyos)
+    const SUPABASE_URL = 'https://mgtkcegwvmnjxnvpmyqz.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndGtjZWd3dm1uanhudnBteXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyODE0NTgsImV4cCI6MjExMDg1NzQ1OH0.tP4J6xhG13ZjSs-C3fS1GOUKYBVILpuzNEEBgRvKkO4';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const PLANS = { Esencial: 80, Negocio: 100, Corporativo: 150 };
+    const CONTACT_EMAIL = 'chreedco@gmail.com';
+    const TODAY = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; })();
+    const money = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(n);
+    const fdate = s => s ? new Date(s + 'T00:00:00').toLocaleDateString('es-CR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const daysTo = s => Math.round((new Date(s + 'T00:00:00') - TODAY) / 86400000);
+
+    let data = { clientes: [] }, current = 0, user = null;
+
+    function show(id) { ['loading-screen', 'login-screen', 'app'].forEach(x => document.getElementById(x).hidden = x !== id); }
+    function loginMsg(text, ok) { const m = document.getElementById('login-msg'); m.hidden = false; m.className = 'msg ' + (ok ? 'ok' : 'err'); m.textContent = text; }
+    let toastTimer;
+    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800); }
+
+    // ===== Sesión =====
+    document.getElementById('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn'); btn.disabled = true;
+      const { error } = await sb.auth.signInWithPassword({ email: document.getElementById('login-email').value.trim(), password: document.getElementById('login-pass').value });
+      btn.disabled = false;
+      if (error) loginMsg('Correo o contraseña incorrectos. Si es tu primera vez, usa el enlace que te envió Chreed Corporation.', false);
+    });
+    document.getElementById('magic-btn').addEventListener('click', async () => {
+      const el = document.getElementById('login-email');
+      if (!el.value.trim() || !el.checkValidity()) { el.reportValidity(); return; }
+      const btn = document.getElementById('magic-btn'); btn.disabled = true;
+      const { error } = await sb.auth.signInWithOtp({ email: el.value.trim(), options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: false } });
+      btn.disabled = false;
+      if (error && (error.status === 429 || /rate limit/i.test(error.message))) loginMsg('En este momento no podemos enviar más correos. Inténtalo en una hora o pide un enlace nuevo a ' + CONTACT_EMAIL + '.', false);
+      else if (error) loginMsg('No pudimos enviar el enlace. Verifica tu correo o pide acceso a ' + CONTACT_EMAIL + '.', false);
+      else loginMsg('Revisa tu correo y abre el enlace desde este mismo dispositivo. Luego crea una contraseña nueva.', true);
+    });
+    async function signOut() { await sb.auth.signOut(); data = { clientes: [] }; show('login-screen'); }
+
+    let started = false;
+    async function start(session) {
+      if (!session) { started = false; user = null; show('login-screen'); return; }
+      if (started) return;
+      started = true; user = session.user;
+      try {
+        const { data: d, error } = await sb.rpc('portal_get');
+        if (error) throw error;
+        data = d || { clientes: [] };
+      } catch (e) { console.error(e); data = { clientes: [], error: true }; }
+      render(); show('app');
+      if (!(user.user_metadata && user.user_metadata.tiene_contrasena)) setTimeout(() => openPasswordForm(true), 400);
+    }
+    sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => start(session), 0); });
+
+    // ===== Estados =====
+    const invStatus = i => i.pagada ? 'pagada' : (daysTo(i.vencimiento) < 0 ? 'vencida' : 'pendiente');
+    const BADGE = { pagada: ['b-ok', 'Pagada'], pendiente: ['b-warn', 'Por pagar'], vencida: ['b-bad', 'Vencida'] };
+    const badge = s => `<span class="badge ${BADGE[s][0]}">${BADGE[s][1]}</span>`;
+
+    // ===== Render =====
+    function render() {
+      const el = document.getElementById('content');
+      const nombre = (user && user.email) || '';
+      if (data.error) { el.innerHTML = `<div class="card empty">No pudimos cargar tu información. Revisa tu conexión y vuelve a intentarlo.<br><br><button class="btn btn-primary btn-sm" onclick="location.reload()">Reintentar</button></div>`; return; }
+      if (!data.clientes.length) {
+        el.innerHTML = `<div class="hello"><h1>¡Hola!</h1><p>${esc(nombre)}</p></div>
+          <div class="card empty"><span class="ms" style="font-size:40px;color:var(--primary)">link_off</span><br>Tu cuenta todavía no está vinculada a ningún servicio.<br>Escríbenos a <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> y lo resolvemos.</div>`;
+        return;
+      }
+      const c = data.clientes[Math.min(current, data.clientes.length - 1)];
+      const inv = c.facturas || [];
+      const unpaid = inv.filter(i => !i.pagada).sort((a, b) => a.vencimiento.localeCompare(b.vencimiento));
+      const vencidas = unpaid.filter(i => invStatus(i) === 'vencida');
+      const saldo = unpaid.reduce((s, i) => s + Number(i.monto), 0);
+      const prox = unpaid.filter(i => invStatus(i) === 'pendiente')[0];
+      const estado = vencidas.length ? ['status-bad', 'Pago vencido'] : unpaid.length ? ['status-warn', 'Pago pendiente'] : ['status-ok', 'Al día'];
+      const primerNombre = (c.contacto || '').trim().split(/\s+/)[0];
+
+      el.innerHTML = `
+        <div class="hello"><h1>¡Hola${primerNombre ? ', ' + esc(primerNombre) : ''}!</h1><p>${esc(c.negocio)} · <span class="plan">Plan ${esc(c.plan)}</span>${c.activo ? '' : ' · <span class="badge b-off">Servicio inactivo</span>'}</p></div>
+        ${data.clientes.length > 1 ? `<div class="biz-switch">${data.clientes.map((x, k) => `<button class="btn btn-sm ${k === current ? 'btn-primary' : 'btn-ghost'}" onclick="current=${k};render()">${esc(x.negocio)}</button>`).join('')}</div>` : ''}
+        ${vencidas.length ? `<div class="notice" style="background:var(--bad-soft);border-color:#F5C2C2;color:var(--bad)"><span><b>Tienes ${vencidas.length} factura${vencidas.length === 1 ? '' : 's'} vencida${vencidas.length === 1 ? '' : 's'}.</b> Para evitar interrupciones en tu servicio, realiza el pago lo antes posible.</span><button class="btn btn-sm btn-ghost" onclick="howToPay()">Cómo pagar</button></div>`
+          : prox && daysTo(prox.vencimiento) <= 5 ? `<div class="notice"><span><b>Tu factura #${prox.numero} vence ${daysTo(prox.vencimiento) === 0 ? 'hoy' : 'en ' + daysTo(prox.vencimiento) + ' día' + (daysTo(prox.vencimiento) === 1 ? '' : 's')}.</b></span><button class="btn btn-sm btn-ghost" onclick="howToPay()">Cómo pagar</button></div>` : ''}
+        <div class="kpis">
+          <div class="card kpi ${estado[0]}"><div class="label"><span class="ms">verified</span> Estado</div><div class="value">${estado[1]}</div></div>
+          <div class="card kpi"><div class="label"><span class="ms">account_balance_wallet</span> Saldo pendiente</div><div class="value">${money(saldo)}</div></div>
+          <div class="card kpi"><div class="label"><span class="ms">event</span> Próximo vencimiento</div><div class="value" style="font-size:17px">${prox ? fdate(prox.vencimiento) : '—'}</div></div>
+          <div class="card kpi accent"><div class="label"><span class="ms">workspace_premium</span> Mensualidad</div><div class="value">${c.activo ? money(PLANS[c.plan] || 0) : '—'}</div></div>
+        </div>
+
+        <div class="card section">
+          <div class="section-head"><h2>Facturas por pagar</h2>${unpaid.length ? `<button class="btn btn-gold btn-sm" onclick="howToPay()"><span class="ms">payments</span> Cómo pagar</button>` : ''}</div>
+          ${unpaid.length ? unpaid.map(i => `<div class="row"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">Factura #${i.numero} · vence el ${fdate(i.vencimiento)}</div></div><div><span class="num">${money(i.monto)}</span>${badge(invStatus(i))}</div></div>`).join('') : '<div class="empty">🎉 No tienes facturas pendientes. ¡Gracias!</div>'}
+        </div>
+
+        <div class="card section">
+          <div class="section-head"><h2>Historial de pagos</h2><span class="sub">${inv.filter(i => i.pagada).length} pagadas</span></div>
+          ${inv.filter(i => i.pagada).length ? inv.filter(i => i.pagada).map(i => `<div class="row"><div><div class="biz">${esc(i.concepto)}</div><div class="sub">Factura #${i.numero} · pagada el ${fdate(i.fecha_pago)}${i.medio ? ' · ' + esc(i.medio) : ''}</div></div><div><span class="num">${money(i.monto)}</span>${badge('pagada')}</div></div>`).join('') : '<div class="empty">Aún no hay pagos registrados.</div>'}
+        </div>
+
+        <div class="card help">
+          <div><b>¿Necesitas ayuda o un cambio en tu página?</b><div class="sub">Escríbenos y te respondemos lo antes posible.</div></div>
+          <a class="btn btn-ghost btn-sm" href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Consulta de ' + c.negocio)}"><span class="ms">mail</span> Escribir a Chreed</a>
+        </div>`;
+    }
+
+    // ===== Modales =====
+    function openModal(html) { document.getElementById('modal-card').innerHTML = html; document.getElementById('modal').classList.add('open'); const f = document.querySelector('#modal-card input'); if (f) f.focus(); }
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+    document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function howToPay() {
+      const c = data.clientes[current] || {};
+      const unpaid = (c.facturas || []).filter(i => !i.pagada);
+      const nums = unpaid.map(i => '#' + i.numero).join(', ');
+      openModal(`<h2 id="modal-title">Cómo pagar</h2>
+        <p style="margin:0">Aceptamos estos medios de pago:</p>
+        <ul>
+          <li><b>Transferencia bancaria</b></li>
+          <li><b>Tarjeta</b> de crédito o débito, mediante un enlace de pago seguro</li>
+          <li><b>PayPal</b></li>
+        </ul>
+        <p class="sub" style="margin:0 0 12px">Escríbenos indicando el número de factura y el medio que prefieres, y te enviamos los datos o el enlace de pago. Cuando registremos tu pago, lo verás aquí como <b>Pagada</b>.</p>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+          <a class="btn btn-primary" href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Pago de factura ' + nums + ' — ' + (c.negocio || ''))}&body=${encodeURIComponent('Hola, quiero pagar la(s) factura(s) ' + nums + '. Medio de pago preferido: ')}"><span class="ms">mail</span> Solicitar datos de pago</a>
+        </div>`);
+    }
+
+    function openPasswordForm(first) {
+      openModal(`<h2 id="modal-title">${first ? '¡Bienvenido! Crea tu contraseña' : 'Cambiar contraseña'}</h2>
+        <form onsubmit="savePassword(event)">
+          <p class="sub" style="margin:0">${first ? 'Con tu contraseña podrás entrar directamente la próxima vez, sin necesidad de un enlace.' : 'Escribe tu nueva contraseña.'}</p>
+          <input type="text" autocomplete="username" value="${esc(user && user.email)}" hidden>
+          <label for="p1" class="sub">Nueva contraseña (mínimo 8 caracteres)</label>
+          <input id="p1" type="password" required minlength="8" autocomplete="new-password">
+          <label for="p2" class="sub">Repetir contraseña</label>
+          <input id="p2" type="password" required minlength="8" autocomplete="new-password">
+          <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">${first ? 'Más tarde' : 'Cancelar'}</button><button class="btn btn-primary" id="pass-btn">Guardar contraseña</button></div>
+        </form>`);
+    }
+    async function savePassword(e) {
+      e.preventDefault();
+      const p1 = document.getElementById('p1').value, p2 = document.getElementById('p2').value;
+      if (p1 !== p2) { toast('Las contraseñas no coinciden'); return; }
+      const b = document.getElementById('pass-btn'); b.disabled = true;
+      const { data: d, error } = await sb.auth.updateUser({ password: p1, data: { tiene_contrasena: true } });
+      b.disabled = false;
+      if (error) { toast('No se pudo guardar: ' + error.message); return; }
+      if (d && d.user) user = d.user;
+      closeModal(); toast('Contraseña guardada');
+    }
+
+    // App instalable
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { scope: './' }).catch(() => {});
+  </script>
+</body>
+</html>

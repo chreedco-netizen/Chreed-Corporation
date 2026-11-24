@@ -52,3 +52,11 @@ git push
   1. Supabase → SQL Editor: `insert into public.staff (email, nombre) values ('correo', 'Nombre');`
   2. Supabase → Authentication → Users → Add user → Send invitation.
 - La seguridad está en la base de datos (Row Level Security): sin un correo autorizado no se puede leer ni modificar nada.
+
+## Portal del cliente "Mi cuenta" (privado por cliente)
+
+- Dirección: https://chreed-corporation.vercel.app/cuenta/ (enlazada desde el menú "Mi cuenta").
+- Cada cliente ve solo sus datos mediante la función `portal_get()` de Supabase (nunca las notas internas).
+- Acceso: en el panel, ficha del cliente → "Invitar al portal". Genera un enlace personal (vence en 1 hora)
+  mediante `api/portal-invite.js`, que usa las variables `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de Vercel.
+- El cliente debe tener un correo en su ficha; ese correo es su usuario.

@@ -46,6 +46,7 @@
           <a href="#proceso" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">Proceso</a>
           <a href="#faq" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">FAQ</a>
           <a href="#contacto" class="font-body text-body-sm text-on-primary hover:text-secondary transition-colors duration-state-change">Contacto</a>
+          <a href="cuenta/" class="font-body text-body-sm text-secondary hover:underline transition-colors duration-state-change">Mi cuenta</a>
         </nav>
 
         <div class="flex items-center gap-gutter-sm shrink-0">
@@ -69,7 +70,8 @@
           <a href="#nosotros" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Nosotros</a>
           <a href="#proceso" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Proceso</a>
           <a href="#faq" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">FAQ</a>
-          <a href="#contacto" class="py-3 font-body text-body-md text-on-primary hover:text-secondary">Contacto</a>
+          <a href="#contacto" class="py-3 font-body text-body-md text-on-primary hover:text-secondary border-b border-white/10">Contacto</a>
+          <a href="cuenta/" class="py-3 font-body text-body-md text-secondary hover:underline">Mi cuenta</a>
         </div>
       </nav>
     </header>
@@ -592,7 +594,7 @@
         </div>
       </section>
 
-      <!-- 9. CONTACTO & 10. MI CUENTA -->
+      <!-- 9. CONTACTO -->
       <section id="contacto" class="max-w-[1200px] mx-auto px-page-margin lg:px-gutter-lg py-section-sm lg:py-section-lg grid grid-cols-1 lg:grid-cols-12 gap-gutter-xl">
         <!-- Contacto -->
         <div class="lg:col-span-8 lg:col-start-3 bg-surface-container-low border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md shadow-sm">
@@ -620,46 +622,6 @@
             <a href="https://instagram.com/chreed_co" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-gutter-xs text-primary hover:underline"><span class="material-symbols-outlined text-primary text-title-md" aria-hidden="true">photo_camera</span> Instagram: @chreed_co</a>
           </div>
         </div>
-
-        <!-- 10. Mi Cuenta (Login / Registro) — OCULTA hasta tener un sistema de cuentas real -->
-        <div id="mi-cuenta" hidden class="hidden lg:col-span-6bg-surface-container border border-outline rounded-md p-gutter-lg flex flex-col gap-gutter-md">
-          <div class="flex items-center justify-between gap-gutter-sm">
-            <div class="flex items-center gap-gutter-sm">
-              <div class="p-gutter-xs bg-surface rounded border border-outline shrink-0">
-                <img src="img/simbolo-morado.png" alt="Símbolo Chreed Co." class="h-7 w-auto object-contain">
-              </div>
-              <h2 class="font-headline text-headline-md text-on-surface">Mi cuenta</h2>
-            </div>
-            <span class="px-gutter-md py-gutter-xs rounded-full bg-primary text-on-primary font-label text-label-sm">Área de Cliente</span>
-          </div>
-          <p class="font-body text-body-md text-on-surface-variant">
-            Ingresa o regístrate para revisar el avance de tu página, descargar facturas, pagar mensualidades y enviar solicitudes de cambio.
-          </p>
-
-          <div class="flex gap-gutter-sm">
-            <button type="button" onclick="toggleAuth(&#39;login&#39;)" id="btn-auth-login" class="px-gutter-md py-gutter-xs rounded bg-primary text-on-primary font-label text-label-sm">Iniciar sesión</button>
-            <button type="button" onclick="toggleAuth(&#39;register&#39;)" id="btn-auth-register" class="px-gutter-md py-gutter-xs rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-sm">Crear cuenta</button>
-          </div>
-
-          <form id="form-login" onsubmit="event.preventDefault(); document.getElementById(&#39;auth-ok&#39;).classList.remove(&#39;hidden&#39;);" class="flex flex-col gap-gutter-md">
-            <input type="email" required placeholder="Correo registrado" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <input type="password" required placeholder="Contraseña" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <button type="submit" data-component-id="button-primary" data-component-type="button" data-component-variant="primary" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-primary text-on-primary font-label text-label-lg self-start">
-              <span data-design-text-token="label-lg">Entrar a mi panel</span>
-            </button>
-          </form>
-
-          <form id="form-register" onsubmit="event.preventDefault(); document.getElementById(&#39;auth-ok&#39;).classList.remove(&#39;hidden&#39;);" class="hidden flex-col gap-gutter-md">
-            <input type="text" required placeholder="Nombre y empresa" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <input type="email" required placeholder="Correo electrónico" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <input type="password" required placeholder="Crea una contraseña" class="rounded border border-outline bg-surface px-gutter-md py-gutter-sm font-body text-body-md">
-            <button type="submit" class="inline-flex items-center justify-center px-gutter-lg py-gutter-sm rounded bg-primary text-on-primary font-label text-label-lg self-start">
-              <span data-design-text-token="label-lg">Registrarme</span>
-            </button>
-          </form>
-
-          <span id="auth-ok" class="hidden font-body text-body-sm text-primary">Acceso verificado. Redirigiendo a tu Área de Cliente.</span>
-        </div>
       </section>
 
     </main>
@@ -681,6 +643,7 @@
             <a href="#proceso" class="hover:text-secondary">Proceso</a>
             <a href="#faq" class="hover:text-secondary">FAQ</a>
             <a href="#contacto" class="hover:text-secondary">Contacto</a>
+            <a href="cuenta/" class="hover:text-secondary">Mi cuenta</a>
           </div>
         </div>
         <div class="pt-gutter-md border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-sm font-body text-body-sm">
@@ -856,24 +819,6 @@
     document.querySelectorAll('#mobile-menu a').forEach(function (a) {
       a.addEventListener('click', function () { toggleMobileMenu(true); });
     });
-
-    function toggleAuth(mode) {
-      const loginForm = document.getElementById('form-login');
-      const regForm = document.getElementById('form-register');
-      const btnLogin = document.getElementById('btn-auth-login');
-      const btnReg = document.getElementById('btn-auth-register');
-      if (mode === 'login') {
-        loginForm.classList.remove('hidden'); loginForm.classList.add('flex');
-        regForm.classList.add('hidden'); regForm.classList.remove('flex');
-        btnLogin.className = 'px-gutter-md py-gutter-xs rounded bg-primary text-on-primary font-label text-label-sm';
-        btnReg.className = 'px-gutter-md py-gutter-xs rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-sm';
-      } else {
-        regForm.classList.remove('hidden'); regForm.classList.add('flex');
-        loginForm.classList.add('hidden'); loginForm.classList.remove('flex');
-        btnReg.className = 'px-gutter-md py-gutter-xs rounded bg-primary text-on-primary font-label text-label-sm';
-        btnLogin.className = 'px-gutter-md py-gutter-xs rounded bg-surface-container-low text-on-surface border border-outline font-label text-label-sm';
-      }
-    }
   </script>
   <!-- Vercel Web Analytics (sin cookies) -->
   <script defer src="/_vercel/insights/script.js"></script>
