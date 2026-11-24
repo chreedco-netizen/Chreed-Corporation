@@ -3,7 +3,7 @@
 // POST → envía un correo de prueba al correo de la empresa
 
 const { supabaseAdmin, bearer } = require('./_lib');
-const { emailEnabled, sendEmail, layout, gmailUser } = require('./_notify');
+const { emailEnabled, emailErrorHelp, sendEmail, layout, gmailUser } = require('./_notify');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
       if (!emailEnabled()) return res.status(400).json({ error: 'El correo todavía no está conectado (falta la contraseña de aplicación de Gmail en Vercel).' });
       const ok = await sendEmail(gmailUser(), 'Prueba de avisos — Chreed Corporation', layout('¡Los avisos por correo funcionan!', '<p style="margin:0">Este es un correo de prueba enviado desde el Panel Chreed. Los recordatorios a tus clientes saldrán con este mismo formato.</p>', { url: 'https://chreed-corporation.vercel.app/panel/', label: 'Abrir Panel Chreed' }), 'Correo de prueba de Chreed Corporation.');
-      return ok ? res.status(200).json({ ok: true, enviadoA: gmailUser() }) : res.status(502).json({ error: 'Gmail rechazó el envío. Revisa la contraseña de aplicación.' });
+      return ok ? res.status(200).json({ ok: true, enviadoA: gmailUser() }) : res.status(502).json({ error: 'Gmail rechazó el envío. ' + emailErrorHelp() });
     }
     const subs = await db.get('push_subs?select=endpoint');
     const recientes = await db.get('notif_log?select=clave,canales,enviado_at,invoices(numero,clients(negocio))&order=enviado_at.desc&limit=15');

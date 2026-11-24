@@ -21,11 +21,21 @@ function getTransporter() {
   }
   return transporter;
 }
+let lastEmailError = '';
 async function sendEmail(to, subject, html, text) {
   const t = getTransporter();
   if (!t || !to) return false;
-  try { await t.sendMail({ from: `"${FROM_NAME}" <${gmailUser()}>`, to, subject, html, text }); return true; }
-  catch (e) { console.error('correo', e && e.message); return false; }
+  try { await t.sendMail({ from: `"${FROM_NAME}" <${gmailUser()}>`, to, subject, html, text }); lastEmailError = ''; return true; }
+  catch (e) { lastEmailError = String((e && (e.response || e.message)) || e || ''); console.error('correo', lastEmailError); return false; }
+}
+// Explicación en español del último error de Gmail (sin datos sensibles)
+function emailErrorHelp() {
+  const m = lastEmailError;
+  const largo = env('GMAIL_APP_PASSWORD').replace(/\s+/g, '').length;
+  if (/534|Application-specific password required/i.test(m)) return 'Google pide una contraseña de aplicación: parece que en Vercel se guardó la contraseña normal de Gmail en lugar de la de 16 letras.';
+  if (/535|Username and Password not accepted|BadCredentials/i.test(m)) return `Google no aceptó la contraseña para ${gmailUser()}. La guardada tiene ${largo} caracteres (debe tener 16). Revisa que sea una contraseña de aplicación creada en la cuenta ${gmailUser()} y copiada completa.`;
+  if (!m) return 'Error desconocido al enviar.';
+  return 'Gmail respondió: ' + m.slice(0, 160);
 }
 
 function layout(title, bodyHtml, cta) {
@@ -111,4 +121,4 @@ async function notifyInvoice(db, inv, client, tipo, clave, extra) {
   return canales.join(',');
 }
 
-module.exports = { emailEnabled, gmailUser, sendEmail, layout, getVapid, sendPush, notifyInvoice, money, fdate, esc, PLAN_MENSUAL };
+module.exports = { emailEnabled, emailErrorHelp, gmailUser, sendEmail, layout, getVapid, sendPush, notifyInvoice, money, fdate, esc, PLAN_MENSUAL };
