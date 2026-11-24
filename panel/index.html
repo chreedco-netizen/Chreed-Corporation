@@ -472,7 +472,16 @@
     }
     async function sendTestEmail(btn) {
       btn.disabled = true;
-      try { const r = await staffFetch('/api/avisos', { method: 'POST' }); const a = await r.json(); toast(r.ok ? 'Correo de prueba enviado a ' + a.enviadoA : (a.error || 'No se pudo enviar')); }
+      try {
+        const r = await staffFetch('/api/avisos', { method: 'POST' }); const a = await r.json();
+        const msg = r.ok ? '✅ Correo de prueba enviado a ' + a.enviadoA + '. Revisa la bandeja (o Spam).' : '⚠️ ' + (a.error || 'No se pudo enviar');
+        toast(r.ok ? 'Correo de prueba enviado' : 'No se pudo enviar el correo de prueba');
+        const box = document.getElementById('avisos-box');
+        let note = document.getElementById('avisos-msg');
+        if (!note) { note = document.createElement('div'); note.id = 'avisos-msg'; box.parentNode.insertBefore(note, box); }
+        note.style.cssText = 'margin:10px 16px 0;padding:10px 12px;border-radius:8px;font-size:13px;' + (r.ok ? 'background:#DCFCE7;color:#15803D' : 'background:#FEE2E2;color:#B91C1C');
+        note.textContent = msg;
+      }
       catch (e) { toast('No se pudo enviar el correo de prueba'); }
       btn.disabled = false;
     }
